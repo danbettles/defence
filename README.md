@@ -1,5 +1,7 @@
 # Defence
 
+[![Build Status](https://travis-ci.com/threestreams/defence.svg?branch=master)](https://travis-ci.com/threestreams/defence)
+
 A clean, un-opinionated intrusion detection/protection system for PHP apps.
 
 **N.B. _Defence_ does not eliminate the need to filter input.**
