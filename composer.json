@@ -1,0 +1,34 @@
+{
+    "name": "threestreams/defence",
+    "type": "library",
+    "license": "ISC",
+    "authors": [
+        {
+            "name": "Daniel Bettles",
+            "email": "danbettles@yahoo.co.uk"
+        }
+    ],
+    "require": {
+        "threestreams/gestalt": "^1.2",
+        "symfony/http-foundation": "^4.3",
+        "psr/log": "^1.1"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.2",
+        "squizlabs/php_codesniffer": "^2.9.1",
+        "danbettles/codesniffer-standard": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {"ThreeStreams\\Defence\\": "src/"}
+    },
+    "autoload-dev": {
+        "psr-4": {"ThreeStreams\\Defence\\Tests\\": "tests/"}
+    },
+    "scripts": {
+        "check-quality": [
+            "phpunit --bootstrap vendor/autoload.php --colors=always tests",
+            "phpcs --standard=phpcs.xml --extensions=php -n -p --colors src tests"
+        ],
+        "lint-fully": "phpcs --standard=phpcs.xml --extensions=php -p --colors src tests"
+    }
+}
