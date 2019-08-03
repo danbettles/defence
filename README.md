@@ -1,10 +1,10 @@
 # Defence
 
-A clean, un-opinionated intrusion detection/protection system for PHP apps.
+A simple intrusion detection/protection system framework for PHP apps.
 
-**N.B. _Defence_ does not eliminate the need to filter input.**
+**N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters go part way to validating user inputs, they take a very high-level view.  Their aim is to detect _obviously_ suspect values, given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank.  The filter is useful because it can quickly and easily prevent SQL injection, for example, but the value may still be invalid as far as your app is concerned.
 
-_Defence_ could be used simply to _detect_ suspicious requests but, with the included handler, will stop the script dead in its tracks.  _Defence_ is used principally to (1) prevent a suspicious-looking request getting any further into your code and potentially exploiting vulnerabilities, and (2) avoid wasting further system resources.
+_Defence_ could be used simply to _detect_ suspicious requests but, configured with the included handler, will stop the script dead in its tracks.  _Defence_ is used principally to (1) prevent a suspicious-looking request getting any further into your code and potentially exploiting vulnerabilities, and (2) avoid wasting further system resources.
 
 A small selection of basic filters are provided but _Defence_ is more a framework.
 
@@ -12,7 +12,7 @@ _Defence_ grew out of a class written for a legacy app that was frequently hound
 
 ## Architecture
 
-At the heart of _Defence_ is a simple filter-chain comprising a number of callable objects, 'filters'.  The current request, in the form of a _Symfony_ HttpFoundation `Request` object, along with a PSR-3-compatible logger, is passed to each filter in turn.  If a filter returns `true` then a 'handler' is immediately executed and processing stops.
+At the heart of _Defence_ is a simple filter-chain comprising a number of callable objects, 'filters'.  The current request, in the form of a _Symfony_ HttpFoundation `Request` object, along with a PSR-3 logger, is passed to each filter in turn.  If a filter returns `true` then a 'handler' is immediately executed and processing stops.
 
 ### Envelope
 
@@ -46,8 +46,6 @@ use ThreeStreams\Defence\Factory\EnvelopeFactory;
 // use ThreeStreams\Defence\Filter\InvalidIso8601DateParameterFilter;
 // use ThreeStreams\Defence\Envelope;
 // use ThreeStreams\Defence\Logger;
-
-//...
 
 $defence = (new DefenceFactory())->createDefault();
 
