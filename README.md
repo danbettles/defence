@@ -4,7 +4,7 @@
 
 A simple intrusion detection/protection system framework for PHP apps.
 
-**N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters go part way to validating user inputs, they take a very high-level view.  Their aim is to detect _obviously_ suspect values, given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank.  The filter is useful because it can quickly and easily prevent SQL injection, for example, but the value may still be invalid as far as your app is concerned.
+**N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters do indeed validate user input, they take a very high-level view.  Their aim is to detect _obviously_ suspect values, given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank; the filter is useful because it can quickly and easily prevent SQL injection, but the value may still be invalid as far as your app is concerned.
 
 _Defence_ could be used simply to _detect_ suspicious requests but, configured with the included handler, will stop the script dead in its tracks.  _Defence_ is used principally to (1) prevent a suspicious-looking request getting any further into your code and potentially exploiting vulnerabilities, and (2) avoid wasting further system resources.
 
