@@ -7,7 +7,7 @@ use ThreeStreams\Defence\Factory\EnvelopeFactory;
 // use ThreeStreams\Defence\Filter\InvalidNumericIdParameterFilter;
 // use ThreeStreams\Defence\Filter\InvalidIso8601DateParameterFilter;
 // use ThreeStreams\Defence\Envelope;
-// use ThreeStreams\Defence\Logger;
+// use ThreeStreams\Defence\Logger\Logger;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

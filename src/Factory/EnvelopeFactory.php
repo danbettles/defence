@@ -5,7 +5,7 @@ namespace ThreeStreams\Defence\Factory;
 
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 
 class EnvelopeFactory
 {

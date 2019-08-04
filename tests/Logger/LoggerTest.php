@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests;
+namespace ThreeStreams\Defence\Tests\Logger;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 
 class LoggerTest extends TestCase
 {

@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Gestalt\SimpleFilterChain;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 use ThreeStreams\Defence\Defence;
 use ThreeStreams\Defence\Handler\HandlerInterface;
 use ThreeStreams\Defence\Filter\FilterInterface;

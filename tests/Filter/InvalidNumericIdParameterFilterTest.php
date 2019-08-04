@@ -6,7 +6,7 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use ThreeStreams\Defence\Filter\InvalidNumericIdParameterFilter;
 use ThreeStreams\Defence\Filter\AbstractInvalidParameterFilter;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 

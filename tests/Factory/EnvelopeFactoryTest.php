@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Factory\EnvelopeFactory;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 
 class EnvelopeFactoryTest extends TestCase
 {

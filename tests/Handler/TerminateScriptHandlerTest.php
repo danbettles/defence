@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use ThreeStreams\Defence\Handler\TerminateScriptHandler;
 use ThreeStreams\Defence\Handler\HandlerInterface;
 use ThreeStreams\Defence\PhpFunctionsWrapper;
-use ThreeStreams\Defence\Logger;
+use ThreeStreams\Defence\Logger\Logger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Factory\HttpResponseFactory;
 use ReflectionClass;
