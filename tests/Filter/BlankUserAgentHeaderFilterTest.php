@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Filter\BlankUserAgentHeaderFilter;
 use ThreeStreams\Defence\Filter\FilterInterface;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ReflectionClass;
@@ -54,7 +54,7 @@ class BlankUserAgentHeaderFilterTest extends TestCase
      */
     public function testInvokeReturnsTrueIfTheUserAgentHeaderIsBlank($expected, $request)
     {
-        $logger = new Logger();
+        $logger = new NullLogger();
         $envelope = new Envelope($request, $logger);
 
         $filter = new BlankUserAgentHeaderFilter();
@@ -65,7 +65,7 @@ class BlankUserAgentHeaderFilterTest extends TestCase
     public function testInvokeAddsALogToTheEnvelope()
     {
         $request = (new RequestFactory())->createWithHeader('User-Agent', '');
-        $logger = new Logger();
+        $logger = new NullLogger();
 
         $envelope = $this
             ->getMockBuilder(Envelope::class)

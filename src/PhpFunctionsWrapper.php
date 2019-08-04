@@ -15,6 +15,8 @@ class PhpFunctionsWrapper
      */
     public function exit($status = 0): void
     {
+        //@codingStandardsIgnoreStart
         exit($status);
+        //@codingStandardsIgnoreEnd
     }
 }

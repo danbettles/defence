@@ -5,7 +5,7 @@ namespace ThreeStreams\Defence\Factory;
 
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 
 class EnvelopeFactory
 {
@@ -15,6 +15,6 @@ class EnvelopeFactory
      */
     public function createDefault(): Envelope
     {
-        return new Envelope(Request::createFromGlobals(), new Logger());
+        return new Envelope(Request::createFromGlobals(), new NullLogger());
     }
 }

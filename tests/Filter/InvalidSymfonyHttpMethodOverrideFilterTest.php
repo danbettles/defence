@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 use ThreeStreams\Defence\Filter\FilterInterface;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ReflectionClass;
@@ -178,7 +178,7 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
      */
     public function testInvokeReturnsTrueIfTheMethodOverrideIsInvalid($expected, $request)
     {
-        $logger = new Logger();
+        $logger = new NullLogger();
         $envelope = new Envelope($request, $logger);
 
         $filter = new InvalidSymfonyHttpMethodOverrideFilter();
@@ -189,7 +189,7 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
     public function testInvokeAddsALogToTheEnvelope()
     {
         $request = $this->createPostRequestWithMethodOverrideInTheQuery('foo');
-        $logger = new Logger();
+        $logger = new NullLogger();
 
         $envelope = $this
             ->getMockBuilder(Envelope::class)

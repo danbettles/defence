@@ -56,6 +56,7 @@ class Envelope implements LoggerAwareInterface
     public function addLog(string $message, string $level = LogLevel::WARNING): self
     {
         $this->getLogger()->log($level, $message, [
+            'host_name' => gethostname(),
             'uri' => $this->getRequest()->getUri(),
         ]);
 

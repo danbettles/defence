@@ -6,7 +6,7 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use ThreeStreams\Defence\Filter\InvalidIso8601DateParameterFilter;
 use ThreeStreams\Defence\Filter\AbstractInvalidParameterFilter;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 
@@ -97,7 +97,7 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
         $parameterNames,
         $allowBlank
     ) {
-        $logger = new Logger();
+        $logger = new NullLogger();
         $envelope = new Envelope($request, $logger);
 
         $filter = new InvalidIso8601DateParameterFilter($parameterNames, $allowBlank);
@@ -108,7 +108,7 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
     public function testInvokeAddsALogToTheEnvelope()
     {
         $request = (new RequestFactory())->createWithGetParameters(['starts_on' => 'foo']);
-        $logger = new Logger();
+        $logger = new NullLogger();
 
         $envelope = $this
             ->getMockBuilder(Envelope::class)

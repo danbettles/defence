@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\Response;
 use ThreeStreams\Defence\Handler\TerminateScriptHandler;
 use ThreeStreams\Defence\Handler\HandlerInterface;
 use ThreeStreams\Defence\PhpFunctionsWrapper;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Factory\HttpResponseFactory;
 use ReflectionClass;
@@ -90,7 +90,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         //Run the handler:
 
-        $envelope = new Envelope($request, new Logger());
+        $envelope = new Envelope($request, new NullLogger());
 
         $handler = new TerminateScriptHandler($phpFunctionsMock, $httpResponseFactoryMock);
         $handler($envelope);

@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "d7e06b8c2f06f19248cd9c621b5bcaf0",
+    "content-hash": "249f22e7ceff7f4493ba65f0e992cc39",
     "packages": [
         {
             "name": "psr/log",
@@ -1093,16 +1093,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "8.2.5",
+            "version": "8.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "c1b8534b3730f20f58600124129197bf1183dc92"
+                "reference": "c319d08ebd31e137034c84ad7339054709491485"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c1b8534b3730f20f58600124129197bf1183dc92",
-                "reference": "c1b8534b3730f20f58600124129197bf1183dc92",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/c319d08ebd31e137034c84ad7339054709491485",
+                "reference": "c319d08ebd31e137034c84ad7339054709491485",
                 "shasum": ""
             },
             "require": {
@@ -1118,7 +1118,7 @@
                 "phar-io/version": "^2.0.1",
                 "php": "^7.2",
                 "phpspec/prophecy": "^1.8.1",
-                "phpunit/php-code-coverage": "^7.0.5",
+                "phpunit/php-code-coverage": "^7.0.7",
                 "phpunit/php-file-iterator": "^2.0.2",
                 "phpunit/php-text-template": "^1.2.1",
                 "phpunit/php-timer": "^2.1.2",
@@ -1146,7 +1146,7 @@
             "type": "library",
             "extra": {
                 "branch-alias": {
-                    "dev-master": "8.2-dev"
+                    "dev-master": "8.3-dev"
                 }
             },
             "autoload": {
@@ -1172,7 +1172,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2019-07-15T06:26:24+00:00"
+            "time": "2019-08-03T15:41:47+00:00"
         },
         {
             "name": "sebastian/code-unit-reverse-lookup",
@@ -2024,6 +2024,8 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^7.2"
+    },
     "platform-dev": []
 }

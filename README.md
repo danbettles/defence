@@ -4,9 +4,9 @@
 
 A simple intrusion detection/protection system framework for PHP apps.
 
-**N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters do indeed validate user input, they take a very high-level view.  Their aim is to detect _obviously_ suspect values, given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank; the filter is useful because it can quickly and easily prevent SQL injection, but the value may still be invalid as far as your app is concerned.
+**N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters do indeed validate user input, they take a very high-level view.  Their aim is to detect _obviously_ suspect values given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank; the filter is useful because it can quickly and easily prevent SQL injection, but the value may still be invalid as far as your app is concerned.
 
-_Defence_ could be used simply to _detect_ suspicious requests but, configured with the included handler, will stop the script dead in its tracks.  _Defence_ is used principally to (1) prevent a suspicious-looking request getting any further into your code and potentially exploiting vulnerabilities, and (2) avoid wasting further system resources.
+_Defence_ could be used simply to _detect_ suspicious requests, but configured with the included handler, will stop the script dead in its tracks.  _Defence_ is used principally to (1) prevent a suspicious-looking request getting any further into your code and potentially exploiting vulnerabilities, and (2) avoid wasting further system resources.
 
 A small selection of basic filters are provided but _Defence_ is more a framework.
 
@@ -41,13 +41,12 @@ composer require threestreams/defence
 The easiest way to get started is to use the factory to create a preconfigured instance of the facade, `Defence`.  The object will be preloaded with all the basic filters included in the library, and will use the default handler, which will immediately terminate the script if the request appears to be suspicious.
 
 ```php
-// use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Factory\DefenceFactory;
 use ThreeStreams\Defence\Factory\EnvelopeFactory;
 // use ThreeStreams\Defence\Filter\InvalidNumericIdParameterFilter;
 // use ThreeStreams\Defence\Filter\InvalidIso8601DateParameterFilter;
-// use ThreeStreams\Defence\Envelope;
-// use ThreeStreams\Defence\Logger\Logger;
+
+$envelope = (new EnvelopeFactory())->createDefault();
 
 $defence = (new DefenceFactory())->createDefault();
 
@@ -58,10 +57,24 @@ $defence = (new DefenceFactory())->createDefault();
 //     ->appendFilter(new InvalidIso8601DateParameterFilter(['starts_on', 'ends_on']))
 // ;
 
-$envelope = (new EnvelopeFactory())->createDefault();
-
-//Alternatively, create an `Envelope` manually so you can use your own logger or configure the request.
-// $envelope = new Envelope(Request::createFromGlobals(), new Logger());
-
 $defence->execute($envelope);
+```
+
+If you also want to keep an eye on what _Defence_ is up to then you could use the included _Slack_ logger to send all log messages to _Slack_.
+
+```php
+use Symfony\Component\HttpFoundation\Request;
+use ThreeStreams\Defence\Logger\SlackLogger;
+use ThreeStreams\Defence\Envelope;
+use ThreeStreams\Defence\Factory\DefenceFactory;
+
+$envelope = new Envelope(
+    Request::createFromGlobals(),
+    new SlackLogger(['webhook_url' => 'CHANGEME'])
+);
+
+(new DefenceFactory())
+    ->createDefault()
+    ->execute($envelope)
+;
 ```

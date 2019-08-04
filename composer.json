@@ -1,5 +1,6 @@
 {
     "name": "threestreams/defence",
+    "description": "A simple intrusion detection/protection system framework for PHP apps.",
     "type": "library",
     "license": "ISC",
     "authors": [
@@ -9,6 +10,7 @@
         }
     ],
     "require": {
+        "php": "^7.2",
         "threestreams/gestalt": "^1.2",
         "symfony/http-foundation": "^4.3",
         "psr/log": "^1.1"
@@ -17,6 +19,9 @@
         "phpunit/phpunit": "^8.2",
         "squizlabs/php_codesniffer": "^2.9.1",
         "danbettles/codesniffer-standard": "dev-master"
+    },
+    "suggest": {
+        "ext-curl": "If you want to use `SlackLogger`."
     },
     "autoload": {
         "psr-4": {"ThreeStreams\\Defence\\": "src/"}
@@ -27,8 +32,7 @@
     "scripts": {
         "check-quality": [
             "phpunit --bootstrap vendor/autoload.php --colors=always tests",
-            "phpcs --standard=phpcs.xml --extensions=php -n -p --colors src tests"
-        ],
-        "lint-fully": "phpcs --standard=phpcs.xml --extensions=php -p --colors src tests"
+            "phpcs --standard=phpcs.xml --extensions=php -p --colors src tests"
+        ]
     }
 }

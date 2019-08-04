@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Factory\EnvelopeFactory;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 
 class EnvelopeFactoryTest extends TestCase
 {
@@ -18,6 +18,6 @@ class EnvelopeFactoryTest extends TestCase
         $this->assertInstanceOf(Envelope::class, $envelope);
 
         $this->assertInstanceOf(Request::class, $envelope->getRequest());
-        $this->assertInstanceOf(Logger::class, $envelope->getLogger());
+        $this->assertInstanceOf(NullLogger::class, $envelope->getLogger());
     }
 }

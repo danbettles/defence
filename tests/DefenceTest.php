@@ -7,7 +7,7 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Gestalt\SimpleFilterChain;
 use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\Logger;
+use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Defence;
 use ThreeStreams\Defence\Handler\HandlerInterface;
 use ThreeStreams\Defence\Filter\FilterInterface;
@@ -16,13 +16,21 @@ class DefenceTest extends TestCase
 {
     private function createEnvelope(): Envelope
     {
-        return new Envelope(Request::createFromGlobals(), new Logger());
+        return new Envelope(Request::createFromGlobals(), new NullLogger());
     }
 
     private function createHandlerMock()
     {
         return $this
             ->getMockBuilder(HandlerInterface::class)
+            ->getMock()
+        ;
+    }
+
+    private function createFilterMock()
+    {
+        return $this
+            ->getMockBuilder(FilterInterface::class)
             ->getMock()
         ;
     }
@@ -55,11 +63,7 @@ class DefenceTest extends TestCase
             ->willReturn(true)  //Simulate request is suspicious.
         ;
 
-        $handlerMock = $this
-            ->getMockBuilder(HandlerInterface::class)
-            ->setMethods(['__invoke'])
-            ->getMock()
-        ;
+        $handlerMock = $this->createHandlerMock();
 
         $handlerMock
             ->expects($this->once())
@@ -88,11 +92,7 @@ class DefenceTest extends TestCase
             ->willReturn(false)  //Simulate request is _not_ suspicious.
         ;
 
-        $handlerMock = $this
-            ->getMockBuilder(HandlerInterface::class)
-            ->setMethods(['__invoke'])
-            ->getMock()
-        ;
+        $handlerMock = $this->createHandlerMock();
 
         $handlerMock
             ->expects($this->never())  //The handler must never be called if the request is not suspicious.
@@ -107,11 +107,7 @@ class DefenceTest extends TestCase
     {
         $envelope = $this->createEnvelope();
 
-        $falseFilterMock = $this
-            ->getMockBuilder(FilterInterface::class)
-            ->setMethods(['__invoke'])
-            ->getMock()
-        ;
+        $falseFilterMock = $this->createFilterMock();
 
         $falseFilterMock
             ->expects($this->once())  //Yes, the filter will be called.
@@ -120,11 +116,7 @@ class DefenceTest extends TestCase
             ->willReturn(false)  //No, the request looks okay.
         ;
 
-        $trueFilterMock = $this
-            ->getMockBuilder(FilterInterface::class)
-            ->setMethods(['__invoke'])
-            ->getMock()
-        ;
+        $trueFilterMock = $this->createFilterMock();
 
         $trueFilterMock
             ->expects($this->once())  //Yes, the filter will be called.
@@ -133,11 +125,7 @@ class DefenceTest extends TestCase
             ->willReturn(true)  //Yes, the request looks suspicious.
         ;
 
-        $neverFilterMock = $this
-            ->getMockBuilder(FilterInterface::class)
-            ->setMethods(['__invoke'])
-            ->getMock()
-        ;
+        $neverFilterMock = $this->createFilterMock();
 
         $neverFilterMock
             ->expects($this->never())  //No, the filter won't be called -- it'll never be reached.
