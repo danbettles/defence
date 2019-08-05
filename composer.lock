@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "249f22e7ceff7f4493ba65f0e992cc39",
+    "content-hash": "8aacfca732b4d75eda44a3e59944e104",
     "packages": [
         {
             "name": "psr/log",
@@ -345,17 +345,20 @@
         },
         {
             "name": "threestreams/gestalt",
-            "version": "v1.2.0",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/threestreams/gestalt.git",
-                "reference": "85ce1c0636b300bb4cd6a364b7421e046ffe4273"
+                "reference": "8282b583bf8711225175f874bf725c19961c4958"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/threestreams/gestalt/zipball/85ce1c0636b300bb4cd6a364b7421e046ffe4273",
-                "reference": "85ce1c0636b300bb4cd6a364b7421e046ffe4273",
+                "url": "https://api.github.com/repos/threestreams/gestalt/zipball/8282b583bf8711225175f874bf725c19961c4958",
+                "reference": "8282b583bf8711225175f874bf725c19961c4958",
                 "shasum": ""
+            },
+            "require": {
+                "php": "^7.2"
             },
             "require-dev": {
                 "danbettles/codesniffer-standard": "dev-master",
@@ -378,7 +381,8 @@
                     "email": "danbettles@yahoo.co.uk"
                 }
             ],
-            "time": "2019-07-17T19:23:29+00:00"
+            "description": "Provides classes that implement basic patterns involving collections.  Key components are a class implementing a simplified filter-chain pattern, `SimpleFilterChain`, and a simple array class, `ArrayObject`.",
+            "time": "2019-08-04T15:19:21+00:00"
         }
     ],
     "packages-dev": [
