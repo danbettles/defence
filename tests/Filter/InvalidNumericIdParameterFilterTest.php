@@ -45,7 +45,7 @@ class InvalidNumericIdParameterFilterTest extends TestCase
             true,
             $requestFactory->createWithGetParameters(['post_id' => "' AND 1 = 1"]),
             ['blog_id', 'post_id'],
-            'allowBlank' => true,
+            'allowBlank' => true,  //The default.
         ], [
             false,
             $requestFactory->createWithGetParameters(['post_id' => '1']),
@@ -83,6 +83,30 @@ class InvalidNumericIdParameterFilterTest extends TestCase
                 'blog_id' => "' AND 1 = 1",
             ]),
             ['blog_id', 'post_id'],
+            'allowBlank' => true,
+        ], [
+            true,
+            $requestFactory->createWithGetParameters(['searchLocation' => [
+                "71094'A=0",
+                '123',
+            ]]),  //An array of IDs.
+            ['searchLocation'],
+            'allowBlank' => true,
+        ], [
+            true,
+            $requestFactory->createWithGetParameters(['searchLocation' => [
+                '123',
+                '',
+            ]]),  //An array of IDs.
+            ['searchLocation'],
+            'allowBlank' => false,
+        ], [
+            false,
+            $requestFactory->createWithGetParameters(['searchLocation' => [
+                '123',
+                '',
+            ]]),  //An array of IDs.
+            ['searchLocation'],
             'allowBlank' => true,
         ]];
     }

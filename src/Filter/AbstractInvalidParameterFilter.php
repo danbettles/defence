@@ -86,14 +86,16 @@ abstract class AbstractInvalidParameterFilter implements FilterInterface
             $parameters = $envelope->getRequest()->{$paramBagName}->all();
             $relevantParameters = \array_intersect_key($parameters, $idParamNamesAsKeys);
 
-            foreach ($relevantParameters as $name => $value) {
-                if ('' === $value && $this->getAllowBlank()) {
-                    continue;
-                }
+            foreach ($relevantParameters as $paramName => $maybeAnArrayOfValues) {
+                foreach ((array) $maybeAnArrayOfValues as $paramValue) {
+                    if ('' === $paramValue && $this->getAllowBlank()) {
+                        continue;
+                    }
 
-                if (!\preg_match($this->getRegExp(), $value)) {
-                    $this->envelopeAddLog($envelope, "{$paramBagName}.{$name}", $value);
-                    return true;
+                    if (!\preg_match($this->getRegExp(), $paramValue)) {
+                        $this->envelopeAddLog($envelope, "{$paramBagName}.{$paramName}", $paramValue);
+                        return true;
+                    }
                 }
             }
         }

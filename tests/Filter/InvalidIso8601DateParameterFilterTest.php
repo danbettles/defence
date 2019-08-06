@@ -85,6 +85,30 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
             $requestFactory->createWithGetParameters(['starts_on' => ' 2019-07-12 ']),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
+        ], [
+            true,
+            $requestFactory->createWithGetParameters(['search_dates' => [
+                '2019-07-12',
+                'foo',
+            ]]),  //An array of dates.
+            ['search_dates'],
+            'allowBlank' => true,
+        ], [
+            true,
+            $requestFactory->createWithGetParameters(['search_dates' => [
+                '2019-07-12',
+                '',
+            ]]),
+            ['search_dates'],
+            'allowBlank' => false,
+        ], [
+            false,
+            $requestFactory->createWithGetParameters(['search_dates' => [
+                '2019-07-12',
+                '',
+            ]]),
+            ['search_dates'],
+            'allowBlank' => true,
         ]];
     }
 
