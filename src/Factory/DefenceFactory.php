@@ -7,7 +7,7 @@ use ThreeStreams\Gestalt\SimpleFilterChain;
 use ThreeStreams\Defence\Handler\TerminateScriptHandler;
 use ThreeStreams\Defence\PhpFunctionsWrapper;
 use ThreeStreams\Defence\Defence;
-use ThreeStreams\Defence\Filter\BlankUserAgentHeaderFilter;
+use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 
 class DefenceFactory
 {
@@ -23,7 +23,7 @@ class DefenceFactory
     public function createDefault(): Defence
     {
         $filterChain = new SimpleFilterChain([
-            new BlankUserAgentHeaderFilter(),
+            new SuspiciousUserAgentHeaderFilter(),
         ]);
 
         $handler = $this->createTerminateScriptHandler();

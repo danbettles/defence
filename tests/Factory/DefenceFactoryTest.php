@@ -6,7 +6,7 @@ namespace ThreeStreams\Defence\Tests\Factory;
 use ThreeStreams\Defence\Tests\AbstractTestCase;
 use ThreeStreams\Defence\Factory\DefenceFactory;
 use ThreeStreams\Defence\Handler\TerminateScriptHandler;
-use ThreeStreams\Defence\Filter\BlankUserAgentHeaderFilter;
+use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 use ThreeStreams\Defence\Defence;
 
 class DefenceFactoryTest extends AbstractTestCase
@@ -20,7 +20,7 @@ class DefenceFactoryTest extends AbstractTestCase
         $filters = $defence->getFilterChain()->getFilters();
 
         $this->assertCount(1, $filters);
-        $this->assertContainsInstanceOf(BlankUserAgentHeaderFilter::class, $filters);
+        $this->assertContainsInstanceOf(SuspiciousUserAgentHeaderFilter::class, $filters);
 
         $this->assertInstanceOf(TerminateScriptHandler::class, $defence->getHandler());
     }

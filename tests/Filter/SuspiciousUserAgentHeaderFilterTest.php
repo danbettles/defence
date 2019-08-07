@@ -5,23 +5,23 @@ namespace ThreeStreams\Defence\Tests\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Filter\BlankUserAgentHeaderFilter;
+use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 use ThreeStreams\Defence\Filter\FilterInterface;
 use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ReflectionClass;
 
-class BlankUserAgentHeaderFilterTest extends TestCase
+class SuspiciousUserAgentHeaderFilterTest extends TestCase
 {
     public function testImplementsFilterinterface()
     {
-        $reflectionClass = new ReflectionClass(BlankUserAgentHeaderFilter::class);
+        $reflectionClass = new ReflectionClass(SuspiciousUserAgentHeaderFilter::class);
 
         $this->assertTrue($reflectionClass->implementsInterface(FilterInterface::class));
     }
 
-    public function providesRequestsWithBlankUserAgentHeader(): array
+    public function providesRequestsWithSuspiciousUserAgentHeader(): array
     {
         $requestFactory = new RequestFactory();
 
@@ -46,18 +46,22 @@ class BlankUserAgentHeaderFilterTest extends TestCase
         ], [
             true,
             Request::createFromGlobals(),  //No `User-Agent` header at all.
+        ], [
+            true,
+            $requestFactory->createWithHeader('User-Agent', '-'),
+        ], [
+            true,
+            $requestFactory->createWithHeader('User-Agent', ' - '),
         ]];
     }
 
     /**
-     * @dataProvider providesRequestsWithBlankUserAgentHeader
+     * @dataProvider providesRequestsWithSuspiciousUserAgentHeader
      */
-    public function testInvokeReturnsTrueIfTheUserAgentHeaderIsBlank($expected, $request)
+    public function testInvokeReturnsTrueIfTheUserAgentHeaderIsSuspicious($expected, $request)
     {
-        $logger = new NullLogger();
-        $envelope = new Envelope($request, $logger);
-
-        $filter = new BlankUserAgentHeaderFilter();
+        $envelope = new Envelope($request, new NullLogger());
+        $filter = new SuspiciousUserAgentHeaderFilter();
 
         $this->assertSame($expected, $filter($envelope));
     }
@@ -80,7 +84,7 @@ class BlankUserAgentHeaderFilterTest extends TestCase
             ->with($this->equalTo('The request has no UA string.'))
         ;
 
-        $filter = new BlankUserAgentHeaderFilter();
+        $filter = new SuspiciousUserAgentHeaderFilter();
         $requestSuspicious = $filter($envelope);
 
         $this->assertTrue($requestSuspicious);
