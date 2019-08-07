@@ -58,6 +58,7 @@ class Envelope implements LoggerAwareInterface
         $this->getLogger()->log($level, $message, [
             'host_name' => gethostname(),
             'uri' => $this->getRequest()->getUri(),
+            'user_agent' => $this->getRequest()->headers->get('User-Agent'),
         ]);
 
         return $this;

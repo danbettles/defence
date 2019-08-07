@@ -45,12 +45,14 @@ class EnvelopeTest extends TestCase
             ->with(LogLevel::WARNING, 'The request looks suspicious.', [
                 'host_name' => gethostname(),
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
+                'user_agent' => 'garply',
             ])
         ;
 
         $request = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
             'QUERY_STRING' => 'bar=baz&qux=quux',
+            'HTTP_USER_AGENT' => 'garply',
         ]);
 
         $envelope = new Envelope($request, $loggerMock);
