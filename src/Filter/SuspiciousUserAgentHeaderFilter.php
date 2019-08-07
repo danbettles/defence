@@ -29,7 +29,7 @@ class SuspiciousUserAgentHeaderFilter implements FilterInterface
         $uaStringTrimmed = \trim($uaString);
 
         if ('' === $uaStringTrimmed || '-' === $uaStringTrimmed) {
-            $envelope->addLog('The request has no UA string.');
+            $envelope->addLog('The request has a suspicious UA string.');
             return true;
         }
 

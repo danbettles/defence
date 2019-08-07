@@ -81,7 +81,7 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
         $envelope
             ->expects($this->once())
             ->method('addLog')
-            ->with($this->equalTo('The request has no UA string.'))
+            ->with($this->equalTo('The request has a suspicious UA string.'))
         ;
 
         $filter = new SuspiciousUserAgentHeaderFilter();
