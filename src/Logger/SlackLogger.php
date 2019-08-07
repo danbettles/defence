@@ -4,9 +4,11 @@ declare(strict_types=1);
 namespace ThreeStreams\Defence\Logger;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Psr\Log\LoggerInterface;
 use Psr\Log\AbstractLogger;
 use InvalidArgumentException;
+use Exception;
 
 /**
  * A simple logger that sends all log messages to Slack.
@@ -26,11 +28,16 @@ class SlackLogger extends AbstractLogger
 
     /**
      * @throws InvalidArgumentException If `webhook_url` is missing.
+     * @throws InvalidArgumentException If the webhook URL is not a valid URL.
      */
     private function setConfig(array $config): self
     {
         if (!array_key_exists('webhook_url', $config)) {
             throw new InvalidArgumentException('`webhook_url` is missing.');
+        }
+
+        if (!filter_var($config['webhook_url'], FILTER_VALIDATE_URL)) {
+            throw new InvalidArgumentException('The webhook URL is not a valid URL.');
         }
 
         $this->config = $config;
@@ -59,9 +66,10 @@ class SlackLogger extends AbstractLogger
         curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 
         $result = curl_exec($curl);
+        $httpResponseCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
         curl_close($curl);
 
-        if (false === $result) {
+        if (false === $result || Response::HTTP_OK !== $httpResponseCode) {
             throw new Exception('Failed to send the JSON to Slack.');
         }
 

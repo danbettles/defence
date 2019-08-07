@@ -8,6 +8,7 @@ use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 use ThreeStreams\Defence\Logger\SlackLogger;
 use InvalidArgumentException;
+use Exception;
 
 class SlackLoggerTest extends TestCase
 {
@@ -19,7 +20,7 @@ class SlackLoggerTest extends TestCase
     public function testConstructor()
     {
         $config = [
-            'webhook_url' => 'foo',
+            'webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz',
         ];
 
         $slackLogger = new SlackLogger($config);
@@ -88,7 +89,7 @@ class SlackLoggerTest extends TestCase
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
-                ['webhook_url' => ''],
+                ['webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz'],
             ])
             ->setMethods(['log'])
             ->getMock()
@@ -119,7 +120,7 @@ class SlackLoggerTest extends TestCase
 
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
-            ->setConstructorArgs([['webhook_url' => '']])
+            ->setConstructorArgs([['webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz']])
             ->setMethods(['sendJsonToSlack'])
             ->getMock()
         ;
@@ -131,5 +132,22 @@ class SlackLoggerTest extends TestCase
         ;
 
         $slackLoggerMock->log($level, $message, $context);
+    }
+
+    public function testLogThrowsAnExceptionIfItFailedToCommunicateWithSlack()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Failed to send the JSON to Slack.');
+
+        $logger = new SlackLogger(['webhook_url' => 'http://localhost']);
+        $logger->log(LogLevel::DEBUG, 'bar');
+    }
+
+    public function testConstructorThrowsAnExceptionIfTheWebhookUrlIsNotAValidUrl()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The webhook URL is not a valid URL.');
+
+        new SlackLogger(['webhook_url' => 'foo']);
     }
 }
