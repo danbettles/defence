@@ -34,30 +34,54 @@ class EnvelopeTest extends TestCase
 
     public function testAddlogAddsALogToTheLogger()
     {
-        $loggerMock = $this
+        $fullyLoadedLoggerMock = $this
             ->getMockBuilder(LoggerInterface::class)
             ->getMock()
         ;
 
-        $loggerMock
+        $fullyLoadedLoggerMock
             ->expects($this->once())
             ->method('log')
             ->with(LogLevel::WARNING, 'The request looks suspicious.', [
                 'host_name' => gethostname(),
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
                 'user_agent' => 'garply',
+                'referer' => 'grault',
             ])
         ;
 
-        $request = new Request([], [], [], [], [], [
+        $fullyLoadedRequest = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
             'QUERY_STRING' => 'bar=baz&qux=quux',
             'HTTP_USER_AGENT' => 'garply',
+            'HTTP_REFERER' => 'grault',
         ]);
 
-        $envelope = new Envelope($request, $loggerMock);
-        $something = $envelope->addLog('The request looks suspicious.');
+        $fullyLoadedEnvelope = new Envelope($fullyLoadedRequest, $fullyLoadedLoggerMock);
+        $something = $fullyLoadedEnvelope->addLog('The request looks suspicious.');
 
-        $this->assertSame($envelope, $something);
+        $this->assertSame($fullyLoadedEnvelope, $something);
+
+        $minimalLoggerMock = $this
+            ->getMockBuilder(LoggerInterface::class)
+            ->getMock()
+        ;
+
+        $minimalLoggerMock
+            ->expects($this->once())
+            ->method('log')
+            ->with(LogLevel::WARNING, 'The request looks suspicious.', [
+                'host_name' => gethostname(),
+                'uri' => 'http://foo.com/?bar=baz&qux=quux',
+            ])
+        ;
+
+        $minimalRequest = new Request([], [], [], [], [], [
+            'HTTP_HOST' => 'foo.com',
+            'QUERY_STRING' => 'bar=baz&qux=quux',
+        ]);
+
+        $minimalEnvelope = new Envelope($minimalRequest, $minimalLoggerMock);
+        $minimalEnvelope->addLog('The request looks suspicious.');
     }
 }

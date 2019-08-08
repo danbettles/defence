@@ -55,11 +55,20 @@ class Envelope implements LoggerAwareInterface
      */
     public function addLog(string $message, string $level = LogLevel::WARNING): self
     {
-        $this->getLogger()->log($level, $message, [
+        $context = [
             'host_name' => gethostname(),
             'uri' => $this->getRequest()->getUri(),
-            'user_agent' => $this->getRequest()->headers->get('User-Agent'),
-        ]);
+        ];
+
+        if ($this->getRequest()->headers->has('User-Agent')) {
+            $context['user_agent'] = $this->getRequest()->headers->get('User-Agent');
+        }
+
+        if ($this->getRequest()->headers->has('referer')) {
+            $context['referer'] = $this->getRequest()->headers->get('referer');
+        }
+
+        $this->getLogger()->log($level, $message, $context);
 
         return $this;
     }
