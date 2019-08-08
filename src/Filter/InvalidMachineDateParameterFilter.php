@@ -5,7 +5,7 @@ namespace ThreeStreams\Defence\Filter;
 
 /**
  * This filter will reject requests containing a date parameter whose value contains unexpected characters.  Unlike the
- * ISO 8601-format filter, which is very strict, it allows for slight variations in format and for typos.  It's purpose
+ * ISO 8601-format filter, which is very strict, it allows for slight variations in format and for typos.  Its purpose
  * is to prevent SQL injection.
  *
  * Allows dates formatted like "YYYY-MM-DD" or "DD-MM-YYYY".
