@@ -68,25 +68,42 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
 
     public function testInvokeAddsALogToTheEnvelope()
     {
-        $request = (new RequestFactory())->createWithHeader('User-Agent', '');
-        $logger = new NullLogger();
+        $filter = new SuspiciousUserAgentHeaderFilter();
 
-        $envelope = $this
+        $completeEnvelopeMock = $this
             ->getMockBuilder(Envelope::class)
-            ->setConstructorArgs([$request, $logger])
+            ->setConstructorArgs([
+                (new RequestFactory())->createWithHeader('User-Agent', ''),
+                new NullLogger(),
+            ])
             ->setMethods(['addLog'])
             ->getMock()
         ;
 
-        $envelope
+        $completeEnvelopeMock
             ->expects($this->once())
             ->method('addLog')
             ->with($this->equalTo('The request has a suspicious UA string.'))
         ;
 
-        $filter = new SuspiciousUserAgentHeaderFilter();
-        $requestSuspicious = $filter($envelope);
+        $this->assertTrue($filter($completeEnvelopeMock));
 
-        $this->assertTrue($requestSuspicious);
+        $incompleteEnvelopeMock = $this
+            ->getMockBuilder(Envelope::class)
+            ->setConstructorArgs([
+                Request::createFromGlobals(),  //No `User-Agent` header.
+                new NullLogger(),
+            ])
+            ->setMethods(['addLog'])
+            ->getMock()
+        ;
+
+        $incompleteEnvelopeMock
+            ->expects($this->once())
+            ->method('addLog')
+            ->with($this->equalTo('The request has no UA string.'))
+        ;
+
+        $this->assertTrue($filter($incompleteEnvelopeMock));
     }
 }

@@ -19,12 +19,16 @@ class SuspiciousUserAgentHeaderFilter implements FilterInterface
      */
     public function __invoke(Envelope $envelope): bool
     {
-        //Blank if the header is blank or absent.
         $uaString = $envelope
             ->getRequest()
             ->headers
-            ->get('User-Agent', '')
+            ->get('User-Agent')
         ;
+
+        if (null === $uaString) {
+            $envelope->addLog('The request has no UA string.');
+            return true;
+        }
 
         $uaStringTrimmed = \trim($uaString);
 
