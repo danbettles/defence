@@ -43,42 +43,42 @@ class InvalidNumericIdParameterFilterTest extends TestCase
 
         return [[
             true,
-            $requestFactory->createWithGetParameters(['post_id' => "' AND 1 = 1"]),
+            $requestFactory->createGet(['post_id' => "' AND 1 = 1"]),
             ['blog_id', 'post_id'],
             'allowBlank' => true,  //The default.
         ], [
             false,
-            $requestFactory->createWithGetParameters(['post_id' => '1']),
+            $requestFactory->createGet(['post_id' => '1']),
             ['blog_id', 'post_id'],
             'allowBlank' => true,
         ], [
             false,
-            $requestFactory->createWithGetParameters(['post_id' => '0']),
+            $requestFactory->createGet(['post_id' => '0']),
             ['blog_id', 'post_id'],
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['post_id' => '-1']),
+            $requestFactory->createGet(['post_id' => '-1']),
             ['blog_id', 'post_id'],
             'allowBlank' => true,
         ], [
             false,  //Request looks okay.
-            $requestFactory->createWithGetParameters(['post_id' => '']),
+            $requestFactory->createGet(['post_id' => '']),
             ['blog_id', 'post_id'],
             'allowBlank' => true,  //Allow blank, the default.
         ], [
             true,  //We're not expecting blanks in this case, so this request is suspicious.
-            $requestFactory->createWithGetParameters(['post_id' => '']),
+            $requestFactory->createGet(['post_id' => '']),
             ['blog_id', 'post_id'],
             'allowBlank' => false,
         ], [
             false,  //Request looks okay, given the config.
-            $requestFactory->createWithGetParameters(['foo_id' => "' AND 1 = 1"]),
+            $requestFactory->createGet(['foo_id' => "' AND 1 = 1"]),
             ['blog_id', 'post_id'],
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters([
+            $requestFactory->createGet([
                 'foo_id' => "' AND 1 = 1",
                 'blog_id' => "' AND 1 = 1",
             ]),
@@ -86,7 +86,7 @@ class InvalidNumericIdParameterFilterTest extends TestCase
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['searchLocation' => [
+            $requestFactory->createGet(['searchLocation' => [
                 "71094'A=0",
                 '123',
             ]]),  //An array of IDs.
@@ -94,7 +94,7 @@ class InvalidNumericIdParameterFilterTest extends TestCase
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['searchLocation' => [
+            $requestFactory->createGet(['searchLocation' => [
                 '123',
                 '',
             ]]),  //An array of IDs.
@@ -102,7 +102,7 @@ class InvalidNumericIdParameterFilterTest extends TestCase
             'allowBlank' => false,
         ], [
             false,
-            $requestFactory->createWithGetParameters(['searchLocation' => [
+            $requestFactory->createGet(['searchLocation' => [
                 '123',
                 '',
             ]]),  //An array of IDs.
@@ -128,9 +128,9 @@ class InvalidNumericIdParameterFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogToTheEnvelope()
+    public function testInvokeAddsALogRecordViaTheEnvelope()
     {
-        $request = (new RequestFactory())->createWithGetParameters(['foo_id' => 'bar']);
+        $request = (new RequestFactory())->createGet(['foo_id' => 'bar']);
         $logger = new NullLogger();
 
         $envelope = $this

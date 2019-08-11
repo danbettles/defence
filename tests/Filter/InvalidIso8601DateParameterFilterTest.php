@@ -43,32 +43,32 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
 
         return [[
             true,
-            $requestFactory->createWithGetParameters(['starts_on' => "' AND 1 = 1"]),
+            $requestFactory->createGet(['starts_on' => "' AND 1 = 1"]),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             false,
-            $requestFactory->createWithGetParameters(['starts_on' => '2019-07-12']),
+            $requestFactory->createGet(['starts_on' => '2019-07-12']),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             false,
-            $requestFactory->createWithGetParameters(['starts_on' => '']),
+            $requestFactory->createGet(['starts_on' => '']),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['starts_on' => '']),
+            $requestFactory->createGet(['starts_on' => '']),
             ['ends_on', 'starts_on'],
             'allowBlank' => false,
         ], [
             false,  //Request looks okay, given the config.
-            $requestFactory->createWithGetParameters(['created_on' => "' AND 1 = 1"]),
+            $requestFactory->createGet(['created_on' => "' AND 1 = 1"]),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters([
+            $requestFactory->createGet([
                 'created_on' => "' AND 1 = 1",
                 'ends_on' => "' AND 1 = 1",
             ]),
@@ -76,18 +76,18 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['starts_on' => ' ']),
+            $requestFactory->createGet(['starts_on' => ' ']),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             true,
             //We're strict: our code shouldn't be sloppy like this, and we don't want it to be sloppy, either.
-            $requestFactory->createWithGetParameters(['starts_on' => ' 2019-07-12 ']),
+            $requestFactory->createGet(['starts_on' => ' 2019-07-12 ']),
             ['ends_on', 'starts_on'],
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['search_dates' => [
+            $requestFactory->createGet(['search_dates' => [
                 '2019-07-12',
                 'foo',
             ]]),  //An array of dates.
@@ -95,7 +95,7 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
             'allowBlank' => true,
         ], [
             true,
-            $requestFactory->createWithGetParameters(['search_dates' => [
+            $requestFactory->createGet(['search_dates' => [
                 '2019-07-12',
                 '',
             ]]),
@@ -103,7 +103,7 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
             'allowBlank' => false,
         ], [
             false,
-            $requestFactory->createWithGetParameters(['search_dates' => [
+            $requestFactory->createGet(['search_dates' => [
                 '2019-07-12',
                 '',
             ]]),
@@ -129,9 +129,9 @@ class InvalidIso8601DateParameterFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogToTheEnvelope()
+    public function testInvokeAddsALogRecordViaTheEnvelope()
     {
-        $request = (new RequestFactory())->createWithGetParameters(['starts_on' => 'foo']);
+        $request = (new RequestFactory())->createGet(['starts_on' => 'foo']);
         $logger = new NullLogger();
 
         $envelope = $this

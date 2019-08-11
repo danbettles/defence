@@ -66,7 +66,7 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogToTheEnvelope()
+    public function testInvokeAddsALogRecordViaTheEnvelope()
     {
         $filter = new SuspiciousUserAgentHeaderFilter();
 

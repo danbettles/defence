@@ -186,7 +186,7 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogToTheEnvelope()
+    public function testInvokeAddsALogRecordViaTheEnvelope()
     {
         $request = $this->createPostRequestWithMethodOverrideInTheQuery('foo');
         $logger = new NullLogger();

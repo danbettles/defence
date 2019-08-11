@@ -15,17 +15,22 @@ class RequestFactory
         return $request;
     }
 
-    public function createPost(): Request
+    public function createPost(array $parameters = []): Request
     {
         $request = Request::createFromGlobals();
         $request->setMethod(Request::METHOD_POST);
 
+        foreach ($parameters as $name => $value) {
+            $request->request->set($name, $value);
+        }
+
         return $request;
     }
 
-    public function createWithGetParameters(array $parameters): Request
+    public function createGet(array $parameters = []): Request
     {
         $request = Request::createFromGlobals();
+        $request->setMethod(Request::METHOD_GET);
 
         foreach ($parameters as $name => $value) {
             $request->query->set($name, $value);
