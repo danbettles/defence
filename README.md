@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.com/threestreams/defence.svg?branch=master)](https://travis-ci.com/threestreams/defence)
 
-A simple intrusion detection/protection system framework for PHP apps.
+A simple intrusion detection/protection system framework written in PHP.
 
 **N.B. _Defence_ does not eliminate the need to filter input.**  While some of the included filters do indeed validate user input, they take a very high-level view.  Their aim is to detect _obviously_ suspect values given a very basic understanding of what they're looking at.  For example, the included ID-parameter filter knows only that certain parameters must contain only digits or perhaps a blank; the filter is useful because it can quickly and easily prevent SQL injection, but the value may still be invalid as far as your app is concerned.
 
@@ -40,7 +40,7 @@ composer require threestreams/defence
 
 ## Usage
 
-The easiest way to get started is to use the factory to create a preconfigured instance of the facade, `Defence`.  The object will be preloaded with all the basic filters included in the library, and will use the default handler, which will immediately terminate the script if the request appears to be suspicious.
+The easiest way to get started is to use the _Defence_ factory to create a pre-configured instance of the facade.  The object will be preloaded with all the basic filters included in the library, and will use the default handler, which will immediately terminate the script if the request appears to be suspicious.
 
 ```php
 use ThreeStreams\Defence\Factory\DefenceFactory;
