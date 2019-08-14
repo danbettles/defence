@@ -1,6 +1,6 @@
 # Defence
 
-[![Build Status](https://travis-ci.com/threestreams/defence.svg?branch=master)](https://travis-ci.com/threestreams/defence) [![Coverage Status](https://coveralls.io/repos/github/threestreams/defence/badge.svg?branch=master)](https://coveralls.io/github/threestreams/defence?branch=master)
+[![Build Status](https://travis-ci.com/threestreams/defence.svg?branch=master)](https://travis-ci.com/threestreams/defence)
 
 A simple intrusion detection/protection system framework written in PHP.
 
