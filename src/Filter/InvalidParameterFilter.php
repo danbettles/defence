@@ -113,7 +113,7 @@ class InvalidParameterFilter implements FilterInterface
 
         foreach ($this->requestGetParametersGrouped($request) as $paramBagName => $parameters) {
             foreach ($parameters as $paramName => $paramValue) {
-                if (\preg_match($this->getSelector(), $paramName)) {
+                if (\preg_match($this->getSelector(), (string) $paramName)) {
                     $relevantParameters[$paramBagName][$paramName] = $paramValue;
                 }
             }

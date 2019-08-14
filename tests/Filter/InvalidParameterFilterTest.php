@@ -181,6 +181,16 @@ class InvalidParameterFilterTest extends TestCase
             'request' => $requestFactory->createPost(['invalid_id' => ['123', "71094'A=0"]]),  //As in `?id[]=123&id[]=71094%27A%3D0`.
             'selector' => '/_id$/',  //All parameters with names matching a regex.
             'test' => '/^\d*$/',
+        ], [
+            'requestIsSuspicious' => false,
+            'request' => $requestFactory->createGet(['1564736436' => '']),  //The query string was `?1564736436=`.
+            'selector' => '/_id$/',  //All parameters with names matching a regex.
+            'test' => '/^\d*$/',
+        ], [
+            'requestIsSuspicious' => false,
+            'request' => $requestFactory->createPost(['1564736436' => '']),  //The query string was `?1564736436=`.
+            'selector' => '/_id$/',  //All parameters with names matching a regex.
+            'test' => '/^\d*$/',
         ]];
     }
 
