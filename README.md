@@ -24,6 +24,8 @@ The current request and the logger are packaged in an `Envelope` object.  It's t
 
 A filter is an instance of a class that implements the filter interface.  In its most basic form, a filter has only to say whether it considers the current request suspicious or not.
 
+Some of the included filters, such as `InvalidParameterFilter`, are configurable.  To make it easier to get up and running, a number of factory methods are included in `FilterFactory` that build useful variants of configurable filters.
+
 ### Handler
 
 A handler is an instance of a class that implements the handler interface.  A handler can do anything.  The default handler sends an HTTP "Forbidden" response and then terminates the script.
@@ -43,18 +45,23 @@ The easiest way to get started is to use the factory to create a preconfigured i
 ```php
 use ThreeStreams\Defence\Factory\DefenceFactory;
 use ThreeStreams\Defence\Factory\EnvelopeFactory;
-// use ThreeStreams\Defence\Filter\InvalidNumericIdParameterFilter;
-// use ThreeStreams\Defence\Filter\InvalidIso8601DateParameterFilter;
+// use ThreeStreams\Defence\Factory\FilterFactory;
+// use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 
-$envelope = (new EnvelopeFactory())->createDefault();
+$envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 
-$defence = (new DefenceFactory())->createDefault();
+$defence = (new DefenceFactory())->createDefaultDefence();
 
-//You could add some more filters at this point.
+//You could add some more filters at this point:
+
+// $filterFactory = new FilterFactory();
+
 // $defence
 //     ->getFilterChain()
-//     ->appendFilter(new InvalidNumericIdParameterFilter(['blog_id', 'post_id']))
-//     ->appendFilter(new InvalidIso8601DateParameterFilter(['starts_on', 'ends_on']))
+//     ->appendFilter($filterFactory->createInvalidIso8601DateParameterFilter(['starts_on', 'ends_on']))
+//     ->appendFilter($filterFactory->createInvalidMachineDateParameterFilter(['search_date']))
+//     ->appendFilter($filterFactory->createInvalidNumericIdParameterFilter('/_id$/'))
+//     ->appendFilter(new InvalidSymfonyHttpMethodOverrideFilter())
 // ;
 
 $defence->execute($envelope);
@@ -74,7 +81,7 @@ $envelope = new Envelope(
 );
 
 (new DefenceFactory())
-    ->createDefault()
+    ->createDefaultDefence()
     ->execute($envelope)
 ;
 ```

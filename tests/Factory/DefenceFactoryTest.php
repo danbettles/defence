@@ -13,7 +13,7 @@ class DefenceFactoryTest extends AbstractTestCase
 {
     public function testCreatedefaultReturnsAPreconfiguredDefence()
     {
-        $defence = (new DefenceFactory())->createDefault();
+        $defence = (new DefenceFactory())->createDefaultDefence();
 
         $this->assertInstanceOf(Defence::class, $defence);
 

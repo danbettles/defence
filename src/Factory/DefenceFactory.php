@@ -20,7 +20,7 @@ class DefenceFactory
      * Creates an instance of `Defence` that contains all _Defence_ filters that require no configuration, and a handler
      * that will immediately send a "Forbidden" response and terminate the script.
      */
-    public function createDefault(): Defence
+    public function createDefaultDefence(): Defence
     {
         $filterChain = new SimpleFilterChain([
             new SuspiciousUserAgentHeaderFilter(),

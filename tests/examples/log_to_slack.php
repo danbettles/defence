@@ -17,6 +17,6 @@ $slackLogger = new SlackLogger([
 $envelope = new Envelope($suspiciousRequest, $slackLogger);
 
 (new DefenceFactory())
-    ->createDefault()
+    ->createDefaultDefence()
     ->execute($envelope)
 ;

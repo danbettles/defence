@@ -11,8 +11,8 @@ use InvalidArgumentException;
  * This filter can be used to reject requests containing a parameter with a suspicious value.  Its principal purpose is
  * to prevent SQL injection.
  *
- * There are a number of different types of parameter that can be easily vetted without in-depth knowledge of their
- * application.  For example, most -- if not all -- database ID (primary/foreign key) parameters, which are frequently
+ * There are a number of different types of parameter that can be easily vetted without in-depth knowledge of how
+ * they're used.  For example, most -- if not all -- database ID (primary/foreign key) parameters, which are frequently
  * targeted in SQL injection attacks, should contain only digits.  Similarly, if you use the ISO 8601 format to express
  * dates then you're expecting only digits and dashes.  Consider the conventions you employ in your own application.
  *

@@ -49,7 +49,7 @@ class TerminateScriptHandler implements HandlerInterface
     {
         $this
             ->getHttpResponseFactory()
-            ->createForbidden(
+            ->createForbiddenResponse(
                 "We're not going to handle your request because it looks suspicious.  " .
                 "Please contact us if we've made a mistake."
             )

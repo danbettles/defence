@@ -13,7 +13,7 @@ class EnvelopeFactoryTest extends TestCase
 {
     public function testCreatedefaultReturnsAPreconfiguredEnvelope()
     {
-        $envelope = (new EnvelopeFactory())->createDefault();
+        $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 
         $this->assertInstanceOf(Envelope::class, $envelope);
 

@@ -7,7 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class HttpResponseFactory
 {
-    public function createForbidden(string $content): Response
+    public function createForbiddenResponse(string $content): Response
     {
         return new Response($content, Response::HTTP_FORBIDDEN);
     }

@@ -9,10 +9,10 @@ use ThreeStreams\Defence\Factory\HttpResponseFactory;
 
 class HttpResponseFactoryTest extends TestCase
 {
-    public function testCreateforbiddenCreatesAForbiddenResponse()
+    public function testCreateforbiddenresponseCreatesAForbiddenResponse()
     {
         $factory = new HttpResponseFactory();
-        $response = $factory->createForbidden('Lorem ipsum dolor.');
+        $response = $factory->createForbiddenResponse('Lorem ipsum dolor.');
 
         $this->assertSame('Lorem ipsum dolor.', $response->getContent());
         $this->assertSame(Response::HTTP_FORBIDDEN, $response->getStatusCode());
