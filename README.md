@@ -1,6 +1,6 @@
 # Defence
 
-[![Build Status](https://travis-ci.com/threestreams/defence.svg?branch=master)](https://travis-ci.com/threestreams/defence)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/threestreams/defence/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/threestreams/defence/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/threestreams/defence/badges/build.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/build-status/master)
 
 A simple intrusion detection/protection system framework written in PHP.
 
