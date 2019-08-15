@@ -4,6 +4,7 @@ build:
       tests:
         override:
           - phpcs-run
+          - php-scrutinizer-run
     my-tests:
       environment:
         php:
