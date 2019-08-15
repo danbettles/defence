@@ -30,9 +30,11 @@
         "psr-4": {"ThreeStreams\\Defence\\Tests\\": "tests/"}
     },
     "scripts": {
+        "test": "phpunit --bootstrap=vendor/autoload.php --colors=always --coverage-clover=var/phpunit/coverage.xml --whitelist=src tests",
+        "lint": "phpcs --standard=phpcs.xml",
         "check-quality": [
-            "phpunit --bootstrap vendor/autoload.php --colors=always tests",
-            "phpcs --standard=phpcs.xml --extensions=php -p --colors src tests"
+            "@test",
+            "@lint"
         ]
     }
 }

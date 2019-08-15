@@ -1,3 +1,6 @@
 ._*
 
 /vendor/
+
+/var/phpunit/*
+!/var/phpunit/.gitkeep

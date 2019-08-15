@@ -1,0 +1,16 @@
+build:
+  nodes:
+    analysis:
+      tests:
+        override:
+          - phpcs-run
+    my-tests:
+      environment:
+        php:
+          version: 7.2
+      tests:
+        override:
+          - command: composer test
+            coverage:
+              file: var/phpunit/coverage.xml
+              format: php-clover
