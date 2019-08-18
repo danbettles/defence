@@ -50,21 +50,31 @@ class SlackLogger extends AbstractLogger
     }
 
     /**
+     * @throws Exception If it failed to initialize a new cURL session.
+     * @throws Exception If `curl_exec()` did not return the result.
      * @throws Exception If it failed to send the JSON to Slack.
      */
     protected function sendJsonToSlack(string $json): string
     {
         $curl = curl_init();
 
-        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        if (false === $curl) {
+            throw new Exception('Failed to initialize a new cURL session.');
+        }
 
-        curl_setopt($curl, CURLOPT_URL, $this->getConfig()['webhook_url']);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
         curl_setopt($curl, CURLOPT_CUSTOMREQUEST, Request::METHOD_POST);
+        curl_setopt($curl, CURLOPT_URL, $this->getConfig()['webhook_url']);
         curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 
         $result = curl_exec($curl);
+
+        if (true === $result) {
+            throw new Exception("`curl_exec()` did not return the result.");
+        }
+
         $httpResponseCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
         curl_close($curl);
 
