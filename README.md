@@ -77,7 +77,7 @@ use ThreeStreams\Defence\Factory\DefenceFactory;
 
 $envelope = new Envelope(
     Request::createFromGlobals(),
-    new SlackLogger(['webhook_url' => 'CHANGEME'])
+    new SlackLogger('YOUR_APP_WEBHOOK_URL')
 );
 
 (new DefenceFactory())

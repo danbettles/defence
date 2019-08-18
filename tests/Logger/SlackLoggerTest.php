@@ -18,22 +18,43 @@ class SlackLoggerTest extends TestCase
 
     public function testConstructor()
     {
-        $slackLogger = new SlackLogger([
-            'webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz',
-        ]);
+        $logger = new SlackLogger('https://hooks.slack.com/services/foo/bar/baz', ['foo' => 'bar']);
+
+        $this->assertSame('https://hooks.slack.com/services/foo/bar/baz', $logger->getWebhookUrl());
 
         $this->assertSame([
             'min_log_level' => LogLevel::DEBUG,
-            'webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz',
-        ], $slackLogger->getConfig());
+            'foo' => 'bar',
+        ], $logger->getOptions());
     }
 
-    public function testConstructorThrowsAnExceptionIfTheConfigIsIncomplete()
+    public function providesInvalidWebhookUrls(): array
+    {
+        return [[
+            '',
+        ], [
+            'foo'
+        ]];
+    }
+
+    /**
+     * @dataProvider providesInvalidWebhookUrls
+     */
+    public function testConstructorThrowsAnExceptionIfTheWebhookUrlIsNotAValidUrl($invalidWebhookUrl)
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('`webhook_url` is missing.');
+        $this->expectExceptionMessage('The webhook URL is not a valid URL.');
 
-        new SlackLogger([]);
+        new SlackLogger($invalidWebhookUrl, []);
+    }
+
+    public function testOptionsAreOptional()
+    {
+        $logger = new SlackLogger('https://hooks.slack.com/services/foo/bar/baz');
+
+        $this->assertSame([
+            'min_log_level' => LogLevel::DEBUG,
+        ], $logger->getOptions());
     }
 
     public function providesLogMethodArguments(): array
@@ -89,7 +110,7 @@ class SlackLoggerTest extends TestCase
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
-                ['webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz'],
+                'https://hooks.slack.com/services/foo/bar/baz',
             ])
             ->setMethods(['log'])
             ->getMock()
@@ -141,7 +162,9 @@ class SlackLoggerTest extends TestCase
 
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
-            ->setConstructorArgs([['webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz']])
+            ->setConstructorArgs([
+                'https://hooks.slack.com/services/foo/bar/baz',
+            ])
             ->setMethods(['sendJsonToSlack'])
             ->getMock()
         ;
@@ -160,16 +183,8 @@ class SlackLoggerTest extends TestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to send the JSON to Slack.');
 
-        $logger = new SlackLogger(['webhook_url' => 'http://localhost']);
+        $logger = new SlackLogger('http://localhost');
         $logger->log(LogLevel::ERROR, 'bar');
-    }
-
-    public function testConstructorThrowsAnExceptionIfTheWebhookUrlIsNotAValidUrl()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The webhook URL is not a valid URL.');
-
-        new SlackLogger(['webhook_url' => 'foo']);
     }
 
     public function providesLogLevelsThatWillTriggerAction(): array
@@ -230,10 +245,8 @@ class SlackLoggerTest extends TestCase
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
-                [
-                    'webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz',
-                    'min_log_level' => $minLogLevel,
-                ],
+                'https://hooks.slack.com/services/foo/bar/baz',
+                ['min_log_level' => $minLogLevel],
             ])
             ->setMethods(['sendJsonToSlack'])
             ->getMock()
@@ -281,10 +294,8 @@ class SlackLoggerTest extends TestCase
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
-                [
-                    'webhook_url' => 'https://hooks.slack.com/services/foo/bar/baz',
-                    'min_log_level' => $minLogLevel,
-                ],
+                'https://hooks.slack.com/services/foo/bar/baz',
+                ['min_log_level' => $minLogLevel],
             ])
             ->setMethods(['sendJsonToSlack'])
             ->getMock()

@@ -43,41 +43,51 @@ class SlackLogger extends AbstractLogger
         LogLevel::DEBUG => ':information_source:',
     ];
 
-    /** @var array */
-    private $config;
+    /** @var string */
+    private $webhookUrl;
 
-    /**
-     * You must specify your _Slack_ app's webhook URL in the `webhook_url` element of the config array.
-     */
-    public function __construct(array $config)
+    /** @var array */
+    private $options;
+
+    public function __construct(string $webhookUrl, array $options = [])
     {
-        $this->setConfig(\array_replace([
-            'min_log_level' => LogLevel::DEBUG,
-        ], $config));
+        $this
+            ->setWebhookUrl($webhookUrl)
+            ->setOptions(\array_replace([
+                'min_log_level' => LogLevel::DEBUG,
+            ], $options))
+        ;
     }
 
     /**
-     * @throws InvalidArgumentException If `webhook_url` is missing.
      * @throws InvalidArgumentException If the webhook URL is not a valid URL.
      */
-    private function setConfig(array $config): self
+    private function setWebhookUrl(string $url): self
     {
-        if (!\array_key_exists('webhook_url', $config)) {
-            throw new InvalidArgumentException('`webhook_url` is missing.');
-        }
-
-        if (!\filter_var($config['webhook_url'], FILTER_VALIDATE_URL)) {
+        if (!\filter_var($url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('The webhook URL is not a valid URL.');
         }
 
-        $this->config = $config;
+        $this->webhookUrl = $url;
 
         return $this;
     }
 
-    public function getConfig(): array
+    public function getWebhookUrl(): string
     {
-        return $this->config;
+        return $this->webhookUrl;
+    }
+
+    private function setOptions(array $options): self
+    {
+        $this->options = $options;
+
+        return $this;
+    }
+
+    public function getOptions(): array
+    {
+        return $this->options;
     }
 
     /**
@@ -96,7 +106,7 @@ class SlackLogger extends AbstractLogger
         \curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
         \curl_setopt($curl, CURLOPT_CUSTOMREQUEST, Request::METHOD_POST);
-        \curl_setopt($curl, CURLOPT_URL, $this->getConfig()['webhook_url']);
+        \curl_setopt($curl, CURLOPT_URL, $this->getWebhookUrl());
         \curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
         \curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 
@@ -121,7 +131,7 @@ class SlackLogger extends AbstractLogger
      */
     private function logLevelIsSufficient(string $logLevel): bool
     {
-        $minLogLevel = $this->getConfig()['min_log_level'];
+        $minLogLevel = $this->getOptions()['min_log_level'];
 
         return self::LOG_LEVEL_PRIORITY[$logLevel] >= self::LOG_LEVEL_PRIORITY[$minLogLevel];
     }

@@ -189,7 +189,10 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
 
         $envelope = $this
             ->getMockBuilder(Envelope::class)
-            ->setConstructorArgs([$request, $logger])
+            ->setConstructorArgs([
+                $request,
+                $logger,
+            ])
             ->setMethods(['addLog'])
             ->getMock()
         ;

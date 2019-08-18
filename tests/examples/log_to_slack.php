@@ -10,9 +10,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 $suspiciousRequest = Request::createFromGlobals();
 $suspiciousRequest->headers->remove('User-Agent');
 
-$slackLogger = new SlackLogger([
-    'webhook_url' => 'CHANGEME',
-]);
+$slackLogger = new SlackLogger('YOUR_APP_WEBHOOK_URL');
 
 $envelope = new Envelope($suspiciousRequest, $slackLogger);
 
