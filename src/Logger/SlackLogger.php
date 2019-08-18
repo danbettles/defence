@@ -11,10 +11,26 @@ use InvalidArgumentException;
 use Exception;
 
 /**
- * A simple logger that sends all log messages to Slack.
+ * A logger that sends log messages to _Slack_.
+ *
+ * A message will be sent to _Slack_ only if its log-level meets or exceeds the minimum log-level of the logger.  The
+ * default minimum log-level of the logger is `"debug"` to ensure that, out of the box, the logger will send all
+ * messages to _Slack_.
  */
 class SlackLogger extends AbstractLogger
 {
+    /** @var int[] */
+    private const LOG_LEVEL_PRIORITY = [
+        LogLevel::EMERGENCY => 8,
+        LogLevel::ALERT => 7,
+        LogLevel::CRITICAL => 6,
+        LogLevel::ERROR => 5,
+        LogLevel::WARNING => 4,
+        LogLevel::NOTICE => 3,
+        LogLevel::INFO => 2,
+        LogLevel::DEBUG => 1,
+    ];
+
     /** @var string[] */
     private const LOG_LEVEL_EMOJI = [
         LogLevel::EMERGENCY => ':bangbang:',
@@ -31,11 +47,13 @@ class SlackLogger extends AbstractLogger
     private $config;
 
     /**
-     * You must specify your Slack app's webhook URL in the `webhook_url` element of the config array.
+     * You must specify your _Slack_ app's webhook URL in the `webhook_url` element of the config array.
      */
     public function __construct(array $config)
     {
-        $this->setConfig($config);
+        $this->setConfig(\array_replace([
+            'min_log_level' => LogLevel::DEBUG,
+        ], $config));
     }
 
     /**
@@ -99,11 +117,25 @@ class SlackLogger extends AbstractLogger
     }
 
     /**
+     * Returns `true` if the specified log-level is sufficient to trigger the logger action, or `false` otherwise.
+     */
+    private function logLevelIsSufficient(string $logLevel): bool
+    {
+        $minLogLevel = $this->getConfig()['min_log_level'];
+
+        return self::LOG_LEVEL_PRIORITY[$logLevel] >= self::LOG_LEVEL_PRIORITY[$minLogLevel];
+    }
+
+    /**
      * {@inheritDoc}
      * @see LoggerInterface::log()
      */
     public function log($level, $message, array $context = array())
     {
+        if (!$this->logLevelIsSufficient($level)) {
+            return;
+        }
+
         $logLevelEmoji = self::LOG_LEVEL_EMOJI[$level];
 
         $contextElements = [];
