@@ -5,11 +5,10 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
-use ThreeStreams\Defence\Filter\FilterInterface;
+use ThreeStreams\Defence\Filter\AbstractFilter;
 use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
-use ReflectionClass;
 
 class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
 {
@@ -49,11 +48,9 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
         return $postRequest;
     }
 
-    public function testImplementsFilterinterface()
+    public function testIsAnAbstractfilter()
     {
-        $reflectionClass = new ReflectionClass(InvalidSymfonyHttpMethodOverrideFilter::class);
-
-        $this->assertTrue($reflectionClass->implementsInterface(FilterInterface::class));
+        $this->assertTrue(is_subclass_of(InvalidSymfonyHttpMethodOverrideFilter::class, AbstractFilter::class));
     }
 
     /**

@@ -22,7 +22,7 @@ use InvalidArgumentException;
  *
  * The validity of the value is determined using the 'validator', a regular expression that matches a _valid_ value.
  */
-class InvalidParameterFilter implements FilterInterface
+class InvalidParameterFilter extends AbstractFilter
 {
     /** @var array|string */
     private $selector;
@@ -33,9 +33,12 @@ class InvalidParameterFilter implements FilterInterface
     /**
      * @param array|string $selector
      * @param string $validator
+     * @param array $options
      */
-    public function __construct($selector, string $validator)
+    public function __construct($selector, string $validator, array $options = [])
     {
+        parent::__construct($options);
+
         $this
             ->setSelector($selector)
             ->setValidator($validator)

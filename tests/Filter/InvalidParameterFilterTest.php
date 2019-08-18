@@ -5,19 +5,16 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use ThreeStreams\Defence\Filter\InvalidParameterFilter;
-use ThreeStreams\Defence\Filter\FilterInterface;
+use ThreeStreams\Defence\Filter\AbstractFilter;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
-use ReflectionClass;
 use InvalidArgumentException;
 
 class InvalidParameterFilterTest extends TestCase
 {
-    public function testImplementsFilterinterface()
+    public function testIsAnAbstractfilter()
     {
-        $reflectionClass = new ReflectionClass(InvalidParameterFilter::class);
-
-        $this->assertTrue($reflectionClass->implementsInterface(FilterInterface::class));
+        $this->assertTrue(is_subclass_of(InvalidParameterFilter::class, AbstractFilter::class));
     }
 
     public function providesConstructorArguments(): array
@@ -40,6 +37,15 @@ class InvalidParameterFilterTest extends TestCase
 
         $this->assertSame($selector, $filter->getSelector());
         $this->assertSame($test, $filter->getValidator());
+    }
+
+    public function testConstructorAcceptsOptions()
+    {
+        $options = ['foo' => 'bar'];
+
+        $filter = new InvalidParameterFilter([], '//', $options);
+
+        $this->assertSame($options, $filter->getOptions());
     }
 
     public function providesInvalidSelectors(): array

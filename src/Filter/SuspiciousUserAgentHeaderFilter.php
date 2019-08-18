@@ -11,7 +11,7 @@ use ThreeStreams\Defence\Envelope;
  * themselves -- indeed many now include their origin in their UA string.  We've seen plenty malicious requests
  * with a blank, or absent, user-agent header but never a benign request with no UA string.
  */
-class SuspiciousUserAgentHeaderFilter implements FilterInterface
+class SuspiciousUserAgentHeaderFilter extends AbstractFilter
 {
     /**
      * {@inheritDoc}

@@ -5,19 +5,16 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
-use ThreeStreams\Defence\Filter\FilterInterface;
+use ThreeStreams\Defence\Filter\AbstractFilter;
 use ThreeStreams\Defence\Logger\NullLogger;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
-use ReflectionClass;
 
 class SuspiciousUserAgentHeaderFilterTest extends TestCase
 {
-    public function testImplementsFilterinterface()
+    public function testIsAnAbstractfilter()
     {
-        $reflectionClass = new ReflectionClass(SuspiciousUserAgentHeaderFilter::class);
-
-        $this->assertTrue($reflectionClass->implementsInterface(FilterInterface::class));
+        $this->assertTrue(is_subclass_of(SuspiciousUserAgentHeaderFilter::class, AbstractFilter::class));
     }
 
     public function providesRequestsWithSuspiciousUserAgentHeader(): array

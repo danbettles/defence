@@ -13,7 +13,7 @@ use ThreeStreams\Defence\Envelope;
  * We've seen requests that have tried to exploit this feature.  It's an attack vector that's easy to detect, so we
  * provided this filter, which will return `true` if the instructed request method looks dodgy.
  */
-class InvalidSymfonyHttpMethodOverrideFilter implements FilterInterface
+class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
 {
     /** @var string[] */
     private $validMethods = [
