@@ -109,12 +109,33 @@ class SlackLoggerTest extends TestCase
         $message = 'Interesting event.';
         $context = ['xyzzy' => 'thud'];
 
-        //@codingStandardsIgnoreStart
-        $contextFormatted = print_r($context, true);
-        //@codingStandardsIgnoreEnd
-
-        $expectedJson = json_encode([
-            'text' => "*Level*\n{$level}\n*Message*\n{$message}\n*Context*\n```{$contextFormatted}```",
+        $expectedJson = \json_encode([
+            'text' => ":information_source: Defence handled suspicious request",
+            'blocks' => [
+                [
+                    'type' => 'section',
+                    'text' => [
+                        'type' => 'mrkdwn',
+                        'text' => 'Handled suspicious request.',
+                    ],
+                ],
+                [
+                    'type' => 'section',
+                    'text' => [
+                        'type' => 'mrkdwn',
+                        'text' => '*:information_source: Info: Interesting event.*',
+                    ],
+                ],
+                [
+                    'type' => 'context',
+                    'elements' => [
+                        [
+                            'type' => 'mrkdwn',
+                            'text' => "xyzzy: thud",
+                        ],
+                    ],
+                ],
+            ],
         ]);
 
         $slackLoggerMock = $this
