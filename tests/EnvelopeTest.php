@@ -57,9 +57,7 @@ class EnvelopeTest extends TestCase
         ]);
 
         $fullyLoadedEnvelope = new Envelope($fullyLoadedRequest, $fullyLoadedLoggerMock);
-        $something = $fullyLoadedEnvelope->addLog('The request looks suspicious.');
-
-        $this->assertSame($fullyLoadedEnvelope, $something);
+        $fullyLoadedEnvelope->addLogEntry(LogLevel::WARNING, 'The request looks suspicious.');
 
         $minimalLoggerMock = $this
             ->getMockBuilder(LoggerInterface::class)
@@ -69,7 +67,7 @@ class EnvelopeTest extends TestCase
         $minimalLoggerMock
             ->expects($this->once())
             ->method('log')
-            ->with(LogLevel::WARNING, 'The request looks suspicious.', [
+            ->with(LogLevel::EMERGENCY, 'The request looks suspicious.', [
                 'host_name' => gethostname(),
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
             ])
@@ -81,6 +79,6 @@ class EnvelopeTest extends TestCase
         ]);
 
         $minimalEnvelope = new Envelope($minimalRequest, $minimalLoggerMock);
-        $minimalEnvelope->addLog('The request looks suspicious.');
+        $minimalEnvelope->addLogEntry(LogLevel::EMERGENCY, 'The request looks suspicious.');
     }
 }

@@ -62,44 +62,44 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogRecordViaTheEnvelope()
+    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious()
     {
-        $filter = new SuspiciousUserAgentHeaderFilter();
+        $completeEnvelope = new Envelope(
+            (new RequestFactory())->createWithHeader('User-Agent', ''),  //Existent, but blank, UA header.
+            new NullLogger()
+        );
 
-        $completeEnvelopeMock = $this
-            ->getMockBuilder(Envelope::class)
-            ->setConstructorArgs([
-                (new RequestFactory())->createWithHeader('User-Agent', ''),
-                new NullLogger(),
-            ])
-            ->setMethods(['addLog'])
+        $filterMock = $this
+            ->getMockBuilder(SuspiciousUserAgentHeaderFilter::class)
+            ->setMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
-        $completeEnvelopeMock
+        $filterMock
             ->expects($this->once())
-            ->method('addLog')
-            ->with($this->equalTo('The request has a suspicious UA string.'))
+            ->method('envelopeAddLogEntry')
+            ->with($completeEnvelope, 'The request has a suspicious UA string.')
         ;
 
-        $this->assertTrue($filter($completeEnvelopeMock));
+        $this->assertTrue($filterMock($completeEnvelope));
 
-        $incompleteEnvelopeMock = $this
-            ->getMockBuilder(Envelope::class)
-            ->setConstructorArgs([
-                Request::createFromGlobals(),  //No `User-Agent` header.
-                new NullLogger(),
-            ])
-            ->setMethods(['addLog'])
+        $incompleteEnvelope = new Envelope(
+            Request::createFromGlobals(),  //No UA header.
+            new NullLogger()
+        );
+
+        $filterMock = $this
+            ->getMockBuilder(SuspiciousUserAgentHeaderFilter::class)
+            ->setMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
-        $incompleteEnvelopeMock
+        $filterMock
             ->expects($this->once())
-            ->method('addLog')
-            ->with($this->equalTo('The request has no UA string.'))
+            ->method('envelopeAddLogEntry')
+            ->with($incompleteEnvelope, 'The request has no UA string.')
         ;
 
-        $this->assertTrue($filter($incompleteEnvelopeMock));
+        $this->assertTrue($filterMock($incompleteEnvelope));
     }
 }

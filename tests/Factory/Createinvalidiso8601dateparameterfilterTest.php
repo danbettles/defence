@@ -3,6 +3,7 @@
 namespace ThreeStreams\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Factory\FilterFactory;
@@ -32,6 +33,18 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
         $this->assertInstanceOf(InvalidParameterFilter::class, $filter);
         $this->assertSame($selector, $filter->getSelector());
         $this->assertSame($validator, $filter->getValidator());
+    }
+
+    public function testFactoryMethodAcceptsOptions()
+    {
+        $filter = (new FilterFactory())->createInvalidIso8601DateParameterFilter(['starts_on'], [
+            'foo' => 'bar',
+        ]);
+
+        $this->assertSame([
+            'log_level' => LogLevel::WARNING,
+            'foo' => 'bar',
+        ], $filter->getOptions());
     }
 
     public function providesRequestsContainingAnInvalidParameter(): array

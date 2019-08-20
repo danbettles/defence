@@ -50,7 +50,7 @@ use ThreeStreams\Defence\Factory\EnvelopeFactory;
 
 $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 
-$defence = (new DefenceFactory())->createDefaultDefence();
+$defence = (new DefenceFactory())->createDefaultDefenceWithBasicFilters();
 
 //You could add some more filters at this point:
 
@@ -67,7 +67,7 @@ $defence = (new DefenceFactory())->createDefaultDefence();
 $defence->execute($envelope);
 ```
 
-If you also want to keep an eye on what _Defence_ is up to then you could use the included _Slack_ logger to send all log messages to _Slack_.
+If you also want to keep an eye on what _Defence_ is up to then you could use the included _Slack_ logger to send log entries to _Slack_.
 
 ```php
 use Symfony\Component\HttpFoundation\Request;
@@ -81,7 +81,38 @@ $envelope = new Envelope(
 );
 
 (new DefenceFactory())
-    ->createDefaultDefence()
+    ->createDefaultDefenceWithBasicFilters()
     ->execute($envelope)
 ;
+```
+
+Let's say you're using `SlackLogger`.  It's likely that some suspicious requests will be more interesting than others.  You might've heard more than enough about requests with a suspicious user-agent header but still want to keep tabs on other filters, to ensure they're not being overzealous, for example.  You can silence a built-in filter by making its log-level lower than the minimum log-level of the logger.  (By default, built-in filters have a log-level of `"warning"`, and, by default, `SlackLogger` will send _all_ log entries.)
+
+```php
+use Psr\Log\LogLevel;
+use Symfony\Component\HttpFoundation\Request;
+use ThreeStreams\Defence\Logger\SlackLogger;
+use ThreeStreams\Defence\Envelope;
+use ThreeStreams\Defence\Factory\DefenceFactory;
+use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use ThreeStreams\Defence\Filter\InvalidParameterFilter;
+
+//Note the minimum log level.
+$slackLogger = new SlackLogger('YOUR_APP_WEBHOOK_URL', [
+    'min_log_level' => LogLevel::WARNING,
+]);
+
+$envelope = new Envelope(Request::createFromGlobals(), $slackLogger);
+
+$defence = (new DefenceFactory())->createDefaultDefence();
+
+$defence
+    ->getFilterChain()
+    //Log entries created by this filter won't make it to Slack...
+    ->appendFilter(new SuspiciousUserAgentHeaderFilter(['log_level' => LogLevel::NOTICE]))
+    //...Whereas log entries created by this one will.
+    ->appendFilter(new InvalidParameterFilter(['q'], '/^[a-z]*$/i', ['log_level' => LogLevel::WARNING]))
+;
+
+$defence->execute($envelope);
 ```

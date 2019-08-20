@@ -13,10 +13,11 @@ class FilterFactory
      * Creates a filter that will reject requests containing a date parameter whose value is not the correct shape.
      *
      * @param array|string $selector
+     * @param array $options
      */
-    public function createInvalidIso8601DateParameterFilter($selector): InvalidParameterFilter
+    public function createInvalidIso8601DateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
-        return new InvalidParameterFilter($selector, '/^(\d{4}-\d{2}-\d{2}|)$/');
+        return new InvalidParameterFilter($selector, '/^(\d{4}-\d{2}-\d{2}|)$/', $options);
     }
 
     /**
@@ -27,10 +28,11 @@ class FilterFactory
      * Expects dates to be formatted like "YYYY-MM-DD" or "DD-MM-YYYY".
      *
      * @param array|string $selector
+     * @param array $options
      */
-    public function createInvalidMachineDateParameterFilter($selector): InvalidParameterFilter
+    public function createInvalidMachineDateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
-        return new InvalidParameterFilter($selector, '/^[\d\-]*$/');
+        return new InvalidParameterFilter($selector, '/^[\d\-]*$/', $options);
     }
 
     /**
@@ -41,9 +43,10 @@ class FilterFactory
      * sorts of database IDs are natural numbers, so that makes it very easy to identify suspicious requests.
      *
      * @param array|string $selector
+     * @param array $options
      */
-    public function createInvalidNumericIdParameterFilter($selector): InvalidParameterFilter
+    public function createInvalidNumericIdParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
-        return new InvalidParameterFilter($selector, '/^\d*$/');
+        return new InvalidParameterFilter($selector, '/^\d*$/', $options);
     }
 }

@@ -182,30 +182,25 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeAddsALogRecordViaTheEnvelope()
+    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious()
     {
-        $request = $this->createPostRequestWithMethodOverrideInTheQuery('foo');
-        $logger = new NullLogger();
+        $envelope = new Envelope(
+            $this->createPostRequestWithMethodOverrideInTheQuery('foo'),
+            new NullLogger()
+        );
 
-        $envelope = $this
-            ->getMockBuilder(Envelope::class)
-            ->setConstructorArgs([
-                $request,
-                $logger,
-            ])
-            ->setMethods(['addLog'])
+        $filterMock = $this
+            ->getMockBuilder(InvalidSymfonyHttpMethodOverrideFilter::class)
+            ->setMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
-        $envelope
+        $filterMock
             ->expects($this->once())
-            ->method('addLog')
-            ->with($this->equalTo('The request contains an invalid Symfony HTTP method override (`FOO`).'))
+            ->method('envelopeAddLogEntry')
+            ->with($envelope, 'The request contains an invalid Symfony HTTP method override (`FOO`).')
         ;
 
-        $filter = new InvalidSymfonyHttpMethodOverrideFilter();
-        $requestSuspicious = $filter($envelope);
-
-        $this->assertTrue($requestSuspicious);
+        $this->assertTrue($filterMock($envelope));
     }
 }

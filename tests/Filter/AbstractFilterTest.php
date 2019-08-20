@@ -3,9 +3,14 @@
 namespace ThreeStreams\Defence\Tests\Filter;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
+use Symfony\Component\HttpFoundation\Request;
 use ThreeStreams\Defence\Filter\AbstractFilter;
 use ThreeStreams\Defence\Filter\FilterInterface;
+use ThreeStreams\Defence\Envelope;
 use ReflectionClass;
+use ReflectionMethod;
 
 class AbstractFilterTest extends TestCase
 {
@@ -26,10 +31,14 @@ class AbstractFilterTest extends TestCase
     public function testConstructor()
     {
         $filterMock = $this->getMockForAbstractClass(AbstractFilter::class, [
-            'options' => ['foo' => 'bar', 'baz' => 'qux'],
+            'options' => [
+                'foo' => 'bar',
+                'baz' => 'qux',
+            ],
         ]);
 
         $this->assertSame([
+            'log_level' => LogLevel::WARNING,
             'foo' => 'bar',
             'baz' => 'qux',
         ], $filterMock->getOptions());
@@ -39,6 +48,78 @@ class AbstractFilterTest extends TestCase
     {
         $filterMock = $this->getMockForAbstractClass(AbstractFilter::class);
 
-        $this->assertSame([], $filterMock->getOptions());
+        $this->assertSame([
+            'log_level' => LogLevel::WARNING,
+        ], $filterMock->getOptions());
+    }
+
+    public function testAddlogentryIsProtected()
+    {
+        $reflectionMethod = new ReflectionMethod(AbstractFilter::class, 'envelopeAddLogEntry');
+
+        $this->assertTrue($reflectionMethod->isProtected());
+    }
+
+    public function providesFiltersAndTheLogEntriesTheyAdd(): array
+    {
+        $returnValue = [];
+
+        $expectedLogLevel = LogLevel::EMERGENCY;
+        $filterOptions = ['log_level' => $expectedLogLevel];
+
+        $returnValue[] = [
+            'expectedLogLevel' => $expectedLogLevel,
+            'expectedLogMessage' => 'System is unusable.',
+            'filter' => new class($filterOptions) extends AbstractFilter {
+
+                public function __invoke(Envelope $envelope): bool
+                {
+                    $this->envelopeAddLogEntry($envelope, 'System is unusable.');
+                    return true;
+                }
+            },
+        ];
+
+        $returnValue[] = [
+            'expectedLogLevel' => LogLevel::WARNING,
+            'expectedLogMessage' => 'Exceptional occurrence that is not an error.',
+            'filter' => new class extends AbstractFilter {
+
+                public function __invoke(Envelope $envelope): bool
+                {
+                    $this->envelopeAddLogEntry($envelope, 'Exceptional occurrence that is not an error.');
+                    return true;
+                }
+            },
+        ];
+
+        return $returnValue;
+    }
+
+    /**
+     * @dataProvider providesFiltersAndTheLogEntriesTheyAdd
+     */
+    public function testAddlogentryAddsALogEntryToTheLogger($expectedLogLevel, $expectedLogMessage, $filter)
+    {
+        $minimalRequest = new Request([], [], [], [], [], [
+            'HTTP_HOST' => 'foo.com',
+            'QUERY_STRING' => 'bar=baz&qux=quux',
+        ]);
+
+        $loggerMock = $this
+            ->getMockBuilder(LoggerInterface::class)
+            ->getMock()
+        ;
+
+        $loggerMock
+            ->expects($this->once())
+            ->method('log')
+            ->with($expectedLogLevel, $expectedLogMessage, [
+                'host_name' => gethostname(),
+                'uri' => 'http://foo.com/?bar=baz&qux=quux',
+            ])
+        ;
+
+        $filter(new Envelope($minimalRequest, $loggerMock));
     }
 }

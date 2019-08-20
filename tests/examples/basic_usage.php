@@ -12,7 +12,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 
 $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 
-$defence = (new DefenceFactory())->createDefaultDefence();
+$defence = (new DefenceFactory())->createDefaultDefenceWithBasicFilters();
 
 //You could add some more filters at this point:
 

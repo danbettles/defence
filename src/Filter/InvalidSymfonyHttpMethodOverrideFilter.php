@@ -45,7 +45,11 @@ class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
         //However, `Request` currently allows certain 'invalid' methods to pass through.  Something like `"__construct"`
         //will be rejected but `"foo"` will become `"FOO"`.  We must, therefore, do one last check.
         if (!\in_array($filteredMethod, $this->validMethods, true)) {
-            $envelope->addLog("The request contains an invalid Symfony HTTP method override (`{$filteredMethod}`).");
+            $this->envelopeAddLogEntry(
+                $envelope,
+                "The request contains an invalid Symfony HTTP method override (`{$filteredMethod}`)."
+            );
+
             return true;
         }
 

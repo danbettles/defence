@@ -16,18 +16,26 @@ class DefenceFactory
     }
 
     /**
-     * Creates an instance of `Defence` that contains all _Defence_ filters that require no configuration, and a handler
-     * that will immediately send a "Forbidden" response and terminate the script.
+     * Creates an instance of `Defence` containing no filters, and a handler that will immediately send a "Forbidden"
+     * response and terminate the script.
      */
     public function createDefaultDefence(): Defence
     {
-        $filterChain = new SimpleFilterChain([
-            new SuspiciousUserAgentHeaderFilter(),
-        ]);
+        return new Defence(new SimpleFilterChain(), $this->createTerminateScriptHandler());
+    }
 
-        $handler = $this->createTerminateScriptHandler();
+    /**
+     * Creates an instance of `Defence` in the default configuration and then adds all filters that require no
+     * set up.
+     */
+    public function createDefaultDefenceWithBasicFilters(): Defence
+    {
+        $defence = $this->createDefaultDefence();
 
-        $defence = new Defence($filterChain, $handler);
+        $defence
+            ->getFilterChain()
+            ->appendFilter(new SuspiciousUserAgentHeaderFilter())
+        ;
 
         return $defence;
     }

@@ -11,7 +11,7 @@ use InvalidArgumentException;
 use Exception;
 
 /**
- * A logger that sends log messages to _Slack_.
+ * A logger that sends log entries to _Slack_.
  *
  * A message will be sent to _Slack_ only if its log-level meets or exceeds the minimum log-level of the logger.  The
  * default minimum log-level of the logger is `"debug"` to ensure that, out of the box, the logger will send all

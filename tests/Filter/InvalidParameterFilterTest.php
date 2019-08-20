@@ -4,6 +4,7 @@ namespace ThreeStreams\Defence\Tests\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
+use Psr\Log\LogLevel;
 use ThreeStreams\Defence\Filter\InvalidParameterFilter;
 use ThreeStreams\Defence\Filter\AbstractFilter;
 use ThreeStreams\Defence\Envelope;
@@ -41,11 +42,14 @@ class InvalidParameterFilterTest extends TestCase
 
     public function testConstructorAcceptsOptions()
     {
-        $options = ['foo' => 'bar'];
+        $filter = new InvalidParameterFilter([], '//', [
+            'foo' => 'bar',
+        ]);
 
-        $filter = new InvalidParameterFilter([], '//', $options);
-
-        $this->assertSame($options, $filter->getOptions());
+        $this->assertSame([
+            'log_level' => LogLevel::WARNING,
+            'foo' => 'bar',
+        ], $filter->getOptions());
     }
 
     public function providesInvalidSelectors(): array
@@ -252,27 +256,31 @@ class InvalidParameterFilterTest extends TestCase
     /**
      * @dataProvider providesLogMessages
      */
-    public function testInvokeAddsALogRecordViaTheEnvelope($expectedMessage, $selector, $validator, $request)
-    {
-        $envelope = $this
-            ->getMockBuilder(Envelope::class)
+    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious(
+        $expectedMessage,
+        $selector,
+        $validator,
+        $request
+    ) {
+        $envelope = new Envelope($request, new NullLogger());
+
+        $filterMock = $this
+            ->getMockBuilder(InvalidParameterFilter::class)
             ->setConstructorArgs([
-                $request,
-                new NullLogger(),
+                $selector,
+                $validator,
             ])
-            ->setMethods(['addLog'])
+            ->setMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
-        $envelope
+        $filterMock
             ->expects($this->once())
-            ->method('addLog')
-            ->with($this->equalTo($expectedMessage))
+            ->method('envelopeAddLogEntry')
+            ->with($envelope, $expectedMessage)
         ;
 
-        $filter = new InvalidParameterFilter($selector, $validator);
-
-        $this->assertTrue($filter($envelope));
+        $this->assertTrue($filterMock($envelope));
     }
 
     public function providesTrustfulRequests(): array
@@ -299,25 +307,25 @@ class InvalidParameterFilterTest extends TestCase
     /**
      * @dataProvider providesTrustfulRequests
      */
-    public function testInvokeDoesNotAddALogRecordIfTheRequestIsNotSuspicious($selector, $validator, $request)
+    public function testInvokeWillNotAddALogEntryIfTheRequestIsNotSuspicious($selector, $validator, $request)
     {
-        $envelope = $this
-            ->getMockBuilder(Envelope::class)
+        $envelope = new Envelope($request, new NullLogger());
+
+        $filterMock = $this
+            ->getMockBuilder(InvalidParameterFilter::class)
             ->setConstructorArgs([
-                $request,
-                new NullLogger(),
+                $selector,
+                $validator,
             ])
-            ->setMethods(['addLog'])
+            ->setMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
-        $envelope
+        $filterMock
             ->expects($this->never())
-            ->method('addLog')
+            ->method('envelopeAddLogEntry')
         ;
 
-        $filter = new InvalidParameterFilter($selector, $validator);
-
-        $this->assertFalse($filter($envelope));
+        $this->assertFalse($filterMock($envelope));
     }
 }

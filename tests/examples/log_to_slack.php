@@ -15,6 +15,6 @@ $slackLogger = new SlackLogger('YOUR_APP_WEBHOOK_URL');
 $envelope = new Envelope($suspiciousRequest, $slackLogger);
 
 (new DefenceFactory())
-    ->createDefaultDefence()
+    ->createDefaultDefenceWithBasicFilters()
     ->execute($envelope)
 ;

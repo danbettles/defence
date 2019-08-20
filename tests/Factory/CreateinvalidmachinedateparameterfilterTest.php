@@ -3,6 +3,7 @@
 namespace ThreeStreams\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Factory\FilterFactory;
@@ -32,6 +33,18 @@ class CreateinvalidmachinedateparameterfilterTest extends TestCase
         $this->assertInstanceOf(InvalidParameterFilter::class, $filter);
         $this->assertSame($selector, $filter->getSelector());
         $this->assertSame($validator, $filter->getValidator());
+    }
+
+    public function testFactoryMethodAcceptsOptions()
+    {
+        $filter = (new FilterFactory())->createInvalidMachineDateParameterFilter(['ends_on'], [
+            'baz' => 'qux',
+        ]);
+
+        $this->assertSame([
+            'log_level' => LogLevel::WARNING,
+            'baz' => 'qux',
+        ], $filter->getOptions());
     }
 
     public function providesRequestsContainingAnInvalidParameter(): array

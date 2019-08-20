@@ -3,6 +3,7 @@
 namespace ThreeStreams\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
+use Psr\Log\LogLevel;
 use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
 use ThreeStreams\Defence\Envelope;
 use ThreeStreams\Defence\Factory\FilterFactory;
@@ -32,6 +33,18 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
         $this->assertInstanceOf(InvalidParameterFilter::class, $filter);
         $this->assertSame($selector, $filter->getSelector());
         $this->assertSame($validator, $filter->getValidator());
+    }
+
+    public function testFactoryMethodAcceptsOptions()
+    {
+        $filter = (new FilterFactory())->createInvalidNumericIdParameterFilter(['id'], [
+            'quux' => 'quz',
+        ]);
+
+        $this->assertSame([
+            'log_level' => LogLevel::WARNING,
+            'quux' => 'quz',
+        ], $filter->getOptions());
     }
 
     public function providesRequestsContainingAnInvalidParameter(): array

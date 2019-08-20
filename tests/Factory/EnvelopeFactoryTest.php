@@ -10,7 +10,7 @@ use ThreeStreams\Defence\Logger\NullLogger;
 
 class EnvelopeFactoryTest extends TestCase
 {
-    public function testCreatedefaultReturnsAPreconfiguredEnvelope()
+    public function testCreatedefaultenvelopeReturnsAPreconfiguredEnvelope()
     {
         $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 

@@ -25,14 +25,14 @@ class SuspiciousUserAgentHeaderFilter extends AbstractFilter
         ;
 
         if (null === $uaString) {
-            $envelope->addLog('The request has no UA string.');
+            $this->envelopeAddLogEntry($envelope, 'The request has no UA string.');
             return true;
         }
 
         $uaStringTrimmed = \trim($uaString);
 
         if ('' === $uaStringTrimmed || '-' === $uaStringTrimmed) {
-            $envelope->addLog('The request has a suspicious UA string.');
+            $this->envelopeAddLogEntry($envelope, 'The request has a suspicious UA string.');
             return true;
         }
 

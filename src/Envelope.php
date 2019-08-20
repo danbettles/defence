@@ -5,7 +5,6 @@ namespace ThreeStreams\Defence;
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
-use Psr\Log\LogLevel;
 
 /**
  * An `Envelope` object is passed down the filter chain and then, if the request was deemed suspicious, into the handler.
@@ -50,9 +49,9 @@ class Envelope implements LoggerAwareInterface
     }
 
     /**
-     * Adds a log, containing some useful information taken from the request, to the logger; by default, adds a warning.
+     * Adds a log entry, containing some useful information taken from the request, to the logger.
      */
-    public function addLog(string $message, string $level = LogLevel::WARNING): self
+    public function addLogEntry(string $level, string $message): void
     {
         $context = [
             'host_name' => gethostname(),
@@ -68,7 +67,5 @@ class Envelope implements LoggerAwareInterface
         }
 
         $this->getLogger()->log($level, $message, $context);
-
-        return $this;
     }
 }
