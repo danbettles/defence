@@ -1,6 +1,6 @@
 {
     "name": "threestreams/defence",
-    "description": "A simple intrusion detection/protection system framework for PHP apps.",
+    "description": "A simple intrusion detection/prevention system framework for PHP apps.",
     "keywords": [
         "IDS",
         "IPS",
@@ -21,7 +21,8 @@
     "authors": [
         {
             "name": "Daniel Bettles",
-            "email": "danbettles@yahoo.co.uk"
+            "email": "danbettles@yahoo.co.uk",
+            "role": "Developer"
         }
     ],
     "require": {

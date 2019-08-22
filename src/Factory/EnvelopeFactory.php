@@ -9,7 +9,7 @@ use ThreeStreams\Defence\Logger\NullLogger;
 class EnvelopeFactory
 {
     /**
-     * Creates an envelope containing a _Symfony_ HTTPFoundation `Request` and an instance of the _Defence_ logger,
+     * Creates an envelope containing a Symfony HTTPFoundation `Request` and an instance of the Defence logger,
      * which is good enough for simply getting information from the filters to the handler.
      */
     public function createDefaultEnvelope(): Envelope
