@@ -1,6 +1,21 @@
 {
     "name": "threestreams/defence",
     "description": "A simple intrusion detection/protection system framework for PHP apps.",
+    "keywords": [
+        "IDS",
+        "IPS",
+        "intrusion",
+        "prevention",
+        "injection",
+        "malicious",
+        "suspicious",
+        "hack",
+        "crack",
+        "request",
+        "logging",
+        "validation",
+        "filter"
+    ],
     "type": "library",
     "license": "ISC",
     "authors": [
