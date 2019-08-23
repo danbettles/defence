@@ -140,7 +140,7 @@ class InvalidParameterFilter extends AbstractFilter
 
         $this->envelopeAddLogEntry(
             $envelope,
-            "The value of `{$paramBagName}.{$paramName}` did not pass validation using the regex `{$this->getValidator()}`."
+            "The value of `{$paramBagName}.{$paramName}` failed validation using the regex `{$this->getValidator()}`."
         );
 
         return false;

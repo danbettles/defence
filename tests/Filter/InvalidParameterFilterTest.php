@@ -221,32 +221,32 @@ class InvalidParameterFilterTest extends TestCase
     public function providesLogMessages(): array
     {
         return [[
-            'expectedMessage' => 'The value of `query.foo_id` did not pass validation using the regex `/^\d*$/`.',
+            'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
             'selector' => ['foo_id'],
             'validator' => '/^\d*$/',
             'request' => (new RequestFactory())->createGet(['foo_id' => 'bar']),
         ], [
-            'expectedMessage' => 'The value of `request.foo_id` did not pass validation using the regex `/^\d*$/`.',
+            'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
             'selector' => ['foo_id'],
             'validator' => '/^\d*$/',
             'request' => (new RequestFactory())->createPost(['foo_id' => 'bar']),
         ], [
-            'expectedMessage' => 'The value of `query.foo_id` did not pass validation using the regex `/^\d*$/`.',
+            'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
             'selector' => '/_id$/',
             'validator' => '/^\d*$/',
             'request' => (new RequestFactory())->createGet(['foo_id' => 'bar']),
         ], [
-            'expectedMessage' => 'The value of `request.foo_id` did not pass validation using the regex `/^\d*$/`.',
+            'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
             'selector' => '/_id$/',
             'validator' => '/^\d*$/',
             'request' => (new RequestFactory())->createPost(['foo_id' => 'bar']),
         ], [
-            'expectedMessage' => 'The value of `query.bar` did not pass validation using the regex `/^[a-z]+$/`.',
+            'expectedMessage' => 'The value of `query.bar` failed validation using the regex `/^[a-z]+$/`.',
             'selector' => ['bar'],
             'validator' => '/^[a-z]+$/',  //A different regex.
             'request' => (new RequestFactory())->createGet(['bar' => 'BAZ']),
         ], [
-            'expectedMessage' => 'The value of `request.bar` did not pass validation using the regex `/^[a-z]+$/`.',
+            'expectedMessage' => 'The value of `request.bar` failed validation using the regex `/^[a-z]+$/`.',
             'selector' => ['bar'],
             'validator' => '/^[a-z]+$/',  //A different regex.
             'request' => (new RequestFactory())->createPost(['bar' => 'BAZ']),
