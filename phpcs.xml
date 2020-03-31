@@ -11,7 +11,7 @@
         <exclude name="Generic.Files.LineLength"/>
     </rule>
 
-    <rule ref="./vendor/danbettles/codesniffer-standard/DanBettles">
+    <rule ref="./vendor/danbettles/codesniffer-standard/src/DanBettles">
         <!--exclude name="Generic.Commenting.Todo"/-->
     </rule>
 </ruleset>
