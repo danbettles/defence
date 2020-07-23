@@ -6,10 +6,10 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestFactory
 {
-    public function createWithHeader($name, $value): Request
+    public function createWithHeader(string $name, $value): Request
     {
         $request = Request::createFromGlobals();
-        $request->headers->set((string) $name, $value);
+        $request->headers->set($name, $value);
 
         return $request;
     }
