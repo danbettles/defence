@@ -6,7 +6,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class RequestFactory
 {
-    public function createWithHeader($name, $value): Request
+    public function createWithHeader(string $name, $value): Request
     {
         $request = Request::createFromGlobals();
         $request->headers->set($name, $value);
@@ -20,7 +20,7 @@ class RequestFactory
         $request->setMethod(Request::METHOD_POST);
 
         foreach ($parameters as $name => $value) {
-            $request->request->set($name, $value);
+            $request->request->set((string) $name, $value);
         }
 
         return $request;
@@ -32,7 +32,7 @@ class RequestFactory
         $request->setMethod(Request::METHOD_GET);
 
         foreach ($parameters as $name => $value) {
-            $request->query->set($name, $value);
+            $request->query->set((string) $name, $value);
         }
 
         return $request;
