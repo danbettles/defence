@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace ThreeStreams\Defence\Tests\Factory;
 
@@ -87,7 +89,7 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
         $request
     ) {
         $filter = (new FilterFactory())->createInvalidNumericIdParameterFilter($selector);
-        $envelope = new Envelope($request, new NullLogger);
+        $envelope = new Envelope($request, new NullLogger());
 
         $this->assertSame($requestIsSuspicious, $filter($envelope));
     }

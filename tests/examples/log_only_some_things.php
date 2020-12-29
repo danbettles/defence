@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace ThreeStreams\Defence\Tests\Factory;
 
@@ -95,7 +97,7 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
         $request
     ) {
         $filter = (new FilterFactory())->createInvalidIso8601DateParameterFilter($selector);
-        $envelope = new Envelope($request, new NullLogger);
+        $envelope = new Envelope($request, new NullLogger());
 
         $this->assertSame($requestIsSuspicious, $filter($envelope));
     }

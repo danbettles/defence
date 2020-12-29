@@ -58,8 +58,9 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
      */
     private function setSelector($selector): self
     {
-        if ((!\is_array($selector) && !\is_string($selector))
-            || empty($selector)
+        if (
+            empty($selector)
+            || (!\is_array($selector) && !\is_string($selector))
         ) {
             throw new InvalidArgumentException('The selector is invalid.');
         }

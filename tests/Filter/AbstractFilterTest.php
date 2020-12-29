@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace ThreeStreams\Defence\Tests\Filter;
 
@@ -70,7 +72,7 @@ class AbstractFilterTest extends TestCase
         $returnValue[] = [
             'expectedLogLevel' => $expectedLogLevel,
             'expectedLogMessage' => 'System is unusable.',
-            'filter' => new class($filterOptions) extends AbstractFilter {
+            'filter' => new class ($filterOptions) extends AbstractFilter {
 
                 public function __invoke(Envelope $envelope): bool
                 {

@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 use ThreeStreams\Defence\Factory\DefenceFactory;
 use ThreeStreams\Defence\Factory\EnvelopeFactory;
