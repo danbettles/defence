@@ -11,7 +11,7 @@ build:
           version: 7.3
       tests:
         override:
-          - command: composer test
+          - command: composer app:test
             coverage:
               file: var/phpunit/coverage.xml
               format: php-clover
