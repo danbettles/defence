@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace ThreeStreams\Defence\Filter;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException;
 use ThreeStreams\Defence\Envelope;
 
 /**
@@ -13,12 +12,15 @@ use ThreeStreams\Defence\Envelope;
  * request and specifying the intended method in a special parameter or in a special header.
  *
  * We've seen requests that have tried to exploit this feature.  It's an attack vector that's easy to detect, so we
- * provided this filter, which will return `true` if the instructed request method looks dodgy.
+ * provided this simple filter, which will return `true` if the request-method override looks at all dodgy.
+ *
+ * The approach is very simple: if a request looks even vaguely dodgy then the filter will reject it, even if Symfony
+ * wouldn't touch it anyway.
  */
 class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
 {
     /** @var string[] */
-    private $validMethods = [
+    private const VALID_METHODS = [
         Request::METHOD_HEAD,
         Request::METHOD_GET,
         Request::METHOD_POST,
@@ -36,21 +38,32 @@ class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
      */
     public function __invoke(Envelope $envelope): bool
     {
-        try {
-            $filteredMethod = $envelope->getRequest()->getMethod();
-        } catch (SuspiciousOperationException $e) {
-            return true;
+        $request = $envelope->getRequest();
+
+        //We're interested in only `POST` requests.
+        if (Request::METHOD_POST !== $request->getRealMethod()) {
+            return false;
         }
 
-        //(In theory) if we got this far then Symfony doesn't think the request method is suspicious.  Full stop.
+        //Pull out all override methods included in the request.
+        $overrideMethods = \array_map('\strtoupper', \array_filter([
+            $request->headers->get('X-HTTP-METHOD-OVERRIDE'),
+            $request->request->get('_method'),
+            $request->query->get('_method'),
+        ]));
 
-        //However, `Request` currently allows certain 'invalid' methods to pass through.  Something like `"__construct"`
-        //will be rejected but `"foo"` will become `"FOO"`.  We must, therefore, do one last check.
-        if (!\in_array($filteredMethod, $this->validMethods, true)) {
-            $this->envelopeAddLogEntry(
-                $envelope,
-                "The request contains an invalid Symfony HTTP method override (`{$filteredMethod}`)."
+        $invalidMethods = \array_diff($overrideMethods, self::VALID_METHODS);
+
+        //Reject the request if any override method, found anywhere, is invalid.
+        if ($invalidMethods) {
+            $logMessage = \sprintf(
+                'The request contains invalid override methods: %s',
+                \implode(', ', \array_map(function ($invalidMethod) {
+                    return "`{$invalidMethod}`";
+                }, $invalidMethods))
             );
+
+            $this->envelopeAddLogEntry($envelope, $logMessage);
 
             return true;
         }
