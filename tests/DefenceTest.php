@@ -53,7 +53,7 @@ class DefenceTest extends TestCase
 
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->getMock()
         ;
 
@@ -82,7 +82,7 @@ class DefenceTest extends TestCase
 
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
-            ->setMethods(['execute'])
+            ->onlyMethods(['execute'])
             ->getMock()
         ;
 

@@ -272,7 +272,7 @@ class InvalidParameterFilterTest extends TestCase
                 $selector,
                 $validator,
             ])
-            ->setMethods(['envelopeAddLogEntry'])
+            ->onlyMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
@@ -319,7 +319,7 @@ class InvalidParameterFilterTest extends TestCase
                 $selector,
                 $validator,
             ])
-            ->setMethods(['envelopeAddLogEntry'])
+            ->onlyMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 

@@ -43,7 +43,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         $httpResponseMock = $this
             ->getMockBuilder(Response::class)
-            ->setMethods(['prepare', 'send'])
+            ->onlyMethods(['prepare', 'send'])
             ->getMock()
         ;
 
@@ -64,7 +64,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         $httpResponseFactoryMock = $this
             ->getMockBuilder(HttpResponseFactory::class)
-            ->setMethods(['createForbiddenResponse'])
+            ->onlyMethods(['createForbiddenResponse'])
             ->getMock()
         ;
 
@@ -79,7 +79,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         $phpFunctionsMock = $this
             ->getMockBuilder(PhpFunctionsWrapper::class)
-            ->setMethods(['exit'])
+            ->onlyMethods(['exit'])
             ->getMock()
         ;
 

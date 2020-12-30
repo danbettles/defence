@@ -73,7 +73,7 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
 
         $filterMock = $this
             ->getMockBuilder(SuspiciousUserAgentHeaderFilter::class)
-            ->setMethods(['envelopeAddLogEntry'])
+            ->onlyMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 
@@ -92,7 +92,7 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
 
         $filterMock = $this
             ->getMockBuilder(SuspiciousUserAgentHeaderFilter::class)
-            ->setMethods(['envelopeAddLogEntry'])
+            ->onlyMethods(['envelopeAddLogEntry'])
             ->getMock()
         ;
 

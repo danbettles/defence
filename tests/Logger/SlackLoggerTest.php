@@ -114,7 +114,7 @@ class SlackLoggerTest extends TestCase
             ->setConstructorArgs([
                 'https://hooks.slack.com/services/foo/bar/baz',
             ])
-            ->setMethods(['log'])
+            ->onlyMethods(['log'])
             ->getMock()
         ;
 
@@ -167,7 +167,7 @@ class SlackLoggerTest extends TestCase
             ->setConstructorArgs([
                 'https://hooks.slack.com/services/foo/bar/baz',
             ])
-            ->setMethods(['sendJsonToSlack'])
+            ->onlyMethods(['sendJsonToSlack'])
             ->getMock()
         ;
 
@@ -250,7 +250,7 @@ class SlackLoggerTest extends TestCase
                 'https://hooks.slack.com/services/foo/bar/baz',
                 ['min_log_level' => $minLogLevel],
             ])
-            ->setMethods(['sendJsonToSlack'])
+            ->onlyMethods(['sendJsonToSlack'])
             ->getMock()
         ;
 
@@ -299,7 +299,7 @@ class SlackLoggerTest extends TestCase
                 'https://hooks.slack.com/services/foo/bar/baz',
                 ['min_log_level' => $minLogLevel],
             ])
-            ->setMethods(['sendJsonToSlack'])
+            ->onlyMethods(['sendJsonToSlack'])
             ->getMock()
         ;
 
