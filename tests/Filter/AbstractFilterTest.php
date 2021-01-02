@@ -7,12 +7,12 @@ namespace ThreeStreams\Defence\Tests\Filter;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
-use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Filter\FilterInterface;
-use ThreeStreams\Defence\Envelope;
 use ReflectionClass;
 use ReflectionMethod;
+use Symfony\Component\HttpFoundation\Request;
+use ThreeStreams\Defence\Envelope;
+use ThreeStreams\Defence\Filter\AbstractFilter;
+use ThreeStreams\Defence\Filter\FilterInterface;
 
 class AbstractFilterTest extends TestCase
 {
@@ -105,6 +105,7 @@ class AbstractFilterTest extends TestCase
     {
         $minimalRequest = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
+            'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => 'bar=baz&qux=quux',
         ]);
 
@@ -118,6 +119,7 @@ class AbstractFilterTest extends TestCase
             ->method('log')
             ->with($expectedLogLevel, $expectedLogMessage, [
                 'host_name' => gethostname(),
+                'request_method' => 'GET',
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
             ])
         ;

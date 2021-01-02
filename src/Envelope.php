@@ -57,8 +57,13 @@ class Envelope implements LoggerAwareInterface
     {
         $context = [
             'host_name' => gethostname(),
+            'request_method' => $this->getRequest()->getRealMethod(),
             'uri' => $this->getRequest()->getUri(),
         ];
+
+        if (Request::METHOD_POST === $this->getRequest()->getRealMethod()) {
+            $context['parameters'] = $this->getRequest()->request->all();
+        }
 
         if ($this->getRequest()->headers->has('User-Agent')) {
             $context['user_agent'] = $this->getRequest()->headers->get('User-Agent');
