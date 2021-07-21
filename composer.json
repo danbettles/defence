@@ -26,8 +26,8 @@
         }
     ],
     "require": {
-        "php": "^7.3",
-        "threestreams/gestalt": "^2.0",
+        "php": "^7.4",
+        "threestreams/gestalt": "^3.0",
         "symfony/http-foundation": "^4.4.7|^5.0",
         "psr/log": "^1.1"
     },
