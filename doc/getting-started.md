@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- PHP 7.3+
+- PHP 7.4+
 - cURL extension, if you want to use the Slack logger
 
 ## Installation

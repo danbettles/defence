@@ -8,7 +8,7 @@ build:
     my-tests:
       environment:
         php:
-          version: 7.3
+          version: 7.4
       tests:
         override:
           - command: composer app:test
