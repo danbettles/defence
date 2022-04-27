@@ -2,11 +2,20 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
-use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
+use DanBettles\Defence\Envelope;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Request;
+
+use function array_flip;
+use function array_intersect_key;
+use function is_array;
+use function is_string;
+use function preg_match;
+
+use const false;
+use const true;
 
 /**
  * This filter can be used to reject requests containing a parameter with a suspicious value.  Its principal purpose is
@@ -53,7 +62,7 @@ class InvalidParameterFilter extends AbstractFilter
      */
     private function setSelector($selector): self
     {
-        if (!\is_array($selector) && !\is_string($selector)) {
+        if (!is_array($selector) && !is_string($selector)) {
             throw new InvalidArgumentException('The selector is invalid.');
         }
 
@@ -101,13 +110,13 @@ class InvalidParameterFilter extends AbstractFilter
      */
     private function filterRequestParametersBySelector(Request $request): array
     {
-        if (\is_array($this->getSelector())) {
-            $selectorParamNamesAsKeys = \array_flip($this->getSelector());
+        if (is_array($this->getSelector())) {
+            $selectorParamNamesAsKeys = array_flip($this->getSelector());
 
             $relevantParameters = [];
 
             foreach ($this->requestGetParametersGrouped($request) as $paramBagName => $parameters) {
-                $relevantParameters[$paramBagName] = \array_intersect_key($parameters, $selectorParamNamesAsKeys);
+                $relevantParameters[$paramBagName] = array_intersect_key($parameters, $selectorParamNamesAsKeys);
             }
 
             return $relevantParameters;
@@ -117,7 +126,7 @@ class InvalidParameterFilter extends AbstractFilter
 
         foreach ($this->requestGetParametersGrouped($request) as $paramBagName => $parameters) {
             foreach ($parameters as $paramName => $paramValue) {
-                if (\preg_match($this->getSelector(), (string) $paramName)) {
+                if (preg_match($this->getSelector(), (string) $paramName)) {
                     $relevantParameters[$paramBagName][$paramName] = $paramValue;
                 }
             }
@@ -136,7 +145,7 @@ class InvalidParameterFilter extends AbstractFilter
         string $paramName,
         string $paramValue
     ): bool {
-        if (\preg_match($this->getValidator(), $paramValue)) {
+        if (preg_match($this->getValidator(), $paramValue)) {
             return true;
         }
 

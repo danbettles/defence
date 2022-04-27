@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Factory;
+namespace DanBettles\Defence\Tests\Factory;
 
-use ThreeStreams\Defence\Tests\AbstractTestCase;
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Handler\TerminateScriptHandler;
-use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
-use ThreeStreams\Defence\Defence;
+use DanBettles\Defence\Tests\AbstractTestCase;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Handler\TerminateScriptHandler;
+use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Defence\Defence;
 
 class DefenceFactoryTest extends AbstractTestCase
 {

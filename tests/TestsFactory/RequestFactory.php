@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\TestsFactory;
+namespace DanBettles\Defence\Tests\TestsFactory;
 
 use Symfony\Component\HttpFoundation\Request;
 

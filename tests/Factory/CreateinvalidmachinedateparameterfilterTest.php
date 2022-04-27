@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Factory;
+namespace DanBettles\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
-use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Factory\FilterFactory;
-use ThreeStreams\Defence\Filter\InvalidParameterFilter;
-use ThreeStreams\Defence\Logger\NullLogger;
+use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Factory\FilterFactory;
+use DanBettles\Defence\Filter\InvalidParameterFilter;
+use DanBettles\Defence\Logger\NullLogger;
 
 class CreateinvalidmachinedateparameterfilterTest extends TestCase
 {

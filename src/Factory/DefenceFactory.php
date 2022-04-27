@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Factory;
+namespace DanBettles\Defence\Factory;
 
-use ThreeStreams\Gestalt\SimpleFilterChain;
-use ThreeStreams\Defence\Handler\TerminateScriptHandler;
-use ThreeStreams\Defence\PhpFunctionsWrapper;
-use ThreeStreams\Defence\Defence;
-use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Gestalt\SimpleFilterChain;
+use DanBettles\Defence\Handler\TerminateScriptHandler;
+use DanBettles\Defence\PhpFunctionsWrapper;
+use DanBettles\Defence\Defence;
+use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 
 class DefenceFactory
 {

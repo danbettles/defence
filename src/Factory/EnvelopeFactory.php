@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Factory;
+namespace DanBettles\Defence\Factory;
 
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\NullLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Logger\NullLogger;
 
 class EnvelopeFactory
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence;
+namespace DanBettles\Defence;
 
 use Symfony\Component\HttpFoundation\Request;
 use Psr\Log\LoggerAwareInterface;

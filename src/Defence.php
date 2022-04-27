@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence;
+namespace DanBettles\Defence;
 
-use ThreeStreams\Gestalt\SimpleFilterChain;
-use ThreeStreams\Defence\Handler\HandlerInterface;
+use DanBettles\Gestalt\SimpleFilterChain;
+use DanBettles\Defence\Handler\HandlerInterface;
 
 class Defence
 {

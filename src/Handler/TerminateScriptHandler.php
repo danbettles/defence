@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Handler;
+namespace DanBettles\Defence\Handler;
 
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\PhpFunctionsWrapper;
-use ThreeStreams\Defence\Factory\HttpResponseFactory;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\PhpFunctionsWrapper;
+use DanBettles\Defence\Factory\HttpResponseFactory;
 
 class TerminateScriptHandler implements HandlerInterface
 {

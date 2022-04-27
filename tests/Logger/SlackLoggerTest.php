@@ -2,14 +2,18 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Logger;
+namespace DanBettles\Defence\Tests\Logger;
 
+use DanBettles\Defence\Logger\SlackLogger;
+use Exception;
+use InvalidArgumentException;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
-use ThreeStreams\Defence\Logger\SlackLogger;
-use InvalidArgumentException;
-use Exception;
+
+use function is_subclass_of;
+use function json_encode;
 
 class SlackLoggerTest extends TestCase
 {
@@ -133,7 +137,7 @@ class SlackLoggerTest extends TestCase
         $message = 'Runtime error that does not require immediate action.';
         $context = ['xyzzy' => 'thud'];
 
-        $expectedJson = \json_encode([
+        $expectedJson = json_encode([
             'text' => ":bangbang: Defence handled suspicious request",
             'blocks' => [
                 [
@@ -162,6 +166,7 @@ class SlackLoggerTest extends TestCase
             ],
         ]);
 
+        /** @var MockObject|SlackLogger */
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -244,6 +249,7 @@ class SlackLoggerTest extends TestCase
      */
     public function testLogWillSendAMessageToSlackIfTheLogLevelIsHighEnough($logLevel, $minLogLevel)
     {
+        /** @var MockObject|SlackLogger */
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -293,6 +299,7 @@ class SlackLoggerTest extends TestCase
      */
     public function testLogWillNotSendAMessageToSlackIfTheLogLevelIsTooLow($logLevel, $minLogLevel)
     {
+        /** @var MockObject|SlackLogger */
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([

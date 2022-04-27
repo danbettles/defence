@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Filter;
+namespace DanBettles\Defence\Tests\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Logger\NullLogger;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Defence\Filter\AbstractFilter;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
 
 class SuspiciousUserAgentHeaderFilterTest extends TestCase
 {

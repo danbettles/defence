@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Handler;
+namespace DanBettles\Defence\Tests\Handler;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use ThreeStreams\Defence\Handler\TerminateScriptHandler;
-use ThreeStreams\Defence\Handler\HandlerInterface;
-use ThreeStreams\Defence\PhpFunctionsWrapper;
-use ThreeStreams\Defence\Logger\NullLogger;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Factory\HttpResponseFactory;
+use DanBettles\Defence\Handler\TerminateScriptHandler;
+use DanBettles\Defence\Handler\HandlerInterface;
+use DanBettles\Defence\PhpFunctionsWrapper;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Factory\HttpResponseFactory;
 use ReflectionClass;
 
 class TerminateScriptHandlerTest extends TestCase

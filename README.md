@@ -1,6 +1,6 @@
 # Defence
 
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/threestreams/defence/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/threestreams/defence/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/threestreams/defence/badges/build.png?b=master)](https://scrutinizer-ci.com/g/threestreams/defence/build-status/master)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/danbettles/defence/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/danbettles/defence/?branch=master) [![Code Coverage](https://scrutinizer-ci.com/g/danbettles/defence/badges/coverage.png?b=master)](https://scrutinizer-ci.com/g/danbettles/defence/?branch=master) [![Build Status](https://scrutinizer-ci.com/g/danbettles/defence/badges/build.png?b=master)](https://scrutinizer-ci.com/g/danbettles/defence/build-status/master)
 
 A simple intrusion detection/prevention system framework written in PHP.
 

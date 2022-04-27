@@ -2,15 +2,20 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Filter;
+namespace DanBettles\Defence\Tests\Filter;
 
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Filter\AbstractFilter;
+use DanBettles\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
-use ThreeStreams\Defence\Logger\NullLogger;
-use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
+
+use function is_subclass_of;
+
+use const false;
+use const true;
 
 /**
  * Start here: https://github.com/symfony/symfony/blob/4.3/src/Symfony/Component/HttpFoundation/Request.php#L1231
@@ -19,7 +24,7 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
 {
     public function testIsAnAbstractfilter()
     {
-        $this->assertTrue(\is_subclass_of(InvalidSymfonyHttpMethodOverrideFilter::class, AbstractFilter::class));
+        $this->assertTrue(is_subclass_of(InvalidSymfonyHttpMethodOverrideFilter::class, AbstractFilter::class));
     }
 
     public function providesRequests(): array

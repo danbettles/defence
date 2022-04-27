@@ -1,5 +1,5 @@
 {
-    "name": "threestreams/defence",
+    "name": "danbettles/defence",
     "description": "A simple intrusion detection/prevention system framework for PHP apps.",
     "keywords": [
         "IDS",
@@ -27,7 +27,7 @@
     ],
     "require": {
         "php": "^7.4|^8.0",
-        "threestreams/gestalt": "^3.0",
+        "danbettles/gestalt": "^4.0",
         "symfony/http-foundation": "^4.4.7|^5.0",
         "psr/log": "^1.1"
     },
@@ -40,10 +40,10 @@
         "ext-curl": "If you want to use `SlackLogger`."
     },
     "autoload": {
-        "psr-4": {"ThreeStreams\\Defence\\": "src/"}
+        "psr-4": {"DanBettles\\Defence\\": "src/"}
     },
     "autoload-dev": {
-        "psr-4": {"ThreeStreams\\Defence\\Tests\\": "tests/"}
+        "psr-4": {"DanBettles\\Defence\\Tests\\": "tests/"}
     },
     "scripts": {
         "app:test": "phpunit --bootstrap=vendor/autoload.php --colors=always --coverage-clover=var/phpunit/coverage.xml --whitelist=src tests",

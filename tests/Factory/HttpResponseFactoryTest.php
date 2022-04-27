@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Factory;
+namespace DanBettles\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Response;
-use ThreeStreams\Defence\Factory\HttpResponseFactory;
+use DanBettles\Defence\Factory\HttpResponseFactory;
 
 class HttpResponseFactoryTest extends TestCase
 {

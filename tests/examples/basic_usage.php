@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Factory\EnvelopeFactory;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Factory\EnvelopeFactory;
 
 //@codingStandardsIgnoreStart
-// use ThreeStreams\Defence\Factory\FilterFactory;
-// use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
+// use DanBettles\Defence\Factory\FilterFactory;
+// use DanBettles\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 //@codingStandardsIgnoreEnd
 
 require_once __DIR__ . '/../../vendor/autoload.php';

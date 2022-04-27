@@ -2,17 +2,22 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Filter;
+namespace DanBettles\Defence\Tests\Filter;
 
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Filter\AbstractFilter;
+use DanBettles\Defence\Filter\FilterInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use ReflectionClass;
 use ReflectionMethod;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Filter\FilterInterface;
+
+use function gethostname;
+
+use const true;
 
 class AbstractFilterTest extends TestCase
 {
@@ -73,7 +78,6 @@ class AbstractFilterTest extends TestCase
             'expectedLogLevel' => $expectedLogLevel,
             'expectedLogMessage' => 'System is unusable.',
             'filter' => new class ($filterOptions) extends AbstractFilter {
-
                 public function __invoke(Envelope $envelope): bool
                 {
                     $this->envelopeAddLogEntry($envelope, 'System is unusable.');
@@ -86,7 +90,6 @@ class AbstractFilterTest extends TestCase
             'expectedLogLevel' => LogLevel::WARNING,
             'expectedLogMessage' => 'Exceptional occurrence that is not an error.',
             'filter' => new class extends AbstractFilter {
-
                 public function __invoke(Envelope $envelope): bool
                 {
                     $this->envelopeAddLogEntry($envelope, 'Exceptional occurrence that is not an error.');
@@ -109,6 +112,7 @@ class AbstractFilterTest extends TestCase
             'QUERY_STRING' => 'bar=baz&qux=quux',
         ]);
 
+        /** @var MockObject|LoggerInterface */
         $loggerMock = $this
             ->getMockBuilder(LoggerInterface::class)
             ->getMock()

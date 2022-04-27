@@ -2,10 +2,12 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
 use Psr\Log\LogLevel;
-use ThreeStreams\Defence\Envelope;
+use DanBettles\Defence\Envelope;
+
+use function array_replace;
 
 /**
  * The default log-level of a filter extending this class is `LogLevel::WARNING`.  That value can be overridden by
@@ -18,7 +20,7 @@ abstract class AbstractFilter implements FilterInterface
 
     public function __construct(array $options = [])
     {
-        $this->setOptions(\array_replace([
+        $this->setOptions(array_replace([
             'log_level' => LogLevel::WARNING,
         ], $options));
     }

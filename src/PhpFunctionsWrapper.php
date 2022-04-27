@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence;
+namespace DanBettles\Defence;
 
 /**
  * Wraps a selection of PHP functions so that we can work with mock objects in tests and test otherwise untestable code.

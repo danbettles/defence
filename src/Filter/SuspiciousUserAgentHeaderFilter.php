@@ -2,9 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
-use ThreeStreams\Defence\Envelope;
+use DanBettles\Defence\Envelope;
+
+use function trim;
+
+use const false;
+use const null;
+use const true;
 
 /**
  * This filter can help to safely eliminate a swathe of suspicious requests.
@@ -31,7 +37,7 @@ class SuspiciousUserAgentHeaderFilter extends AbstractFilter
             return true;
         }
 
-        $uaStringTrimmed = \trim($uaString);
+        $uaStringTrimmed = trim($uaString);
 
         if ('' === $uaStringTrimmed || '-' === $uaStringTrimmed) {
             $this->envelopeAddLogEntry($envelope, 'The request has a suspicious UA string.');

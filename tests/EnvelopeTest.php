@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests;
+namespace DanBettles\Defence\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerAwareInterface;
@@ -10,8 +10,8 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\NullLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Logger\NullLogger;
 
 class EnvelopeTest extends TestCase
 {

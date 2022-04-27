@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests;
+namespace DanBettles\Defence\Tests;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Gestalt\SimpleFilterChain;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\NullLogger;
-use ThreeStreams\Defence\Defence;
-use ThreeStreams\Defence\Handler\HandlerInterface;
-use ThreeStreams\Defence\Filter\FilterInterface;
+use DanBettles\Gestalt\SimpleFilterChain;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Defence;
+use DanBettles\Defence\Handler\HandlerInterface;
+use DanBettles\Defence\Filter\FilterInterface;
 
 class DefenceTest extends TestCase
 {

@@ -5,10 +5,10 @@
 The following example expands on the one given earlier, in [Getting Started](getting-started.md), by adding more filters to the default filter chain.
 
 ```php
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Factory\EnvelopeFactory;
-use ThreeStreams\Defence\Factory\FilterFactory;
-use ThreeStreams\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Factory\EnvelopeFactory;
+use DanBettles\Defence\Factory\FilterFactory;
+use DanBettles\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 
 $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 
@@ -41,9 +41,9 @@ If you want to keep a closer eye on what Defence is doing then you could use the
 
 ```php
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Logger\SlackLogger;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Logger\SlackLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Factory\DefenceFactory;
 
 $envelope = new Envelope(
     Request::createFromGlobals(),
@@ -67,11 +67,11 @@ In the following example we use the Slack logger to keep an eye on proceedings.
 ```php
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Logger\SlackLogger;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
-use ThreeStreams\Defence\Filter\InvalidParameterFilter;
+use DanBettles\Defence\Logger\SlackLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Defence\Filter\InvalidParameterFilter;
 
 //Send log entries with a log-level of "warning", and above, to Slack.
 $slackLogger = new SlackLogger('YOUR_APP_WEBHOOK_URL', [

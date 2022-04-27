@@ -10,7 +10,7 @@
 Install using Composer.  Assuming Composer is installed globally, run the following command at the root of your app.
 
 ```sh
-composer require threestreams/defence
+composer require danbettles/defence
 ```
 
 ## Basic Usage
@@ -18,8 +18,8 @@ composer require threestreams/defence
 The easiest way to get started, using Defence as an intrusion _prevention_ system, is to use the factories to create the building blocks.
 
 ```php
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Factory\EnvelopeFactory;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Factory\EnvelopeFactory;
 
 $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 $defence = (new DefenceFactory())->createDefaultDefenceWithBasicFilters();

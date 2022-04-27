@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Filter;
+namespace DanBettles\Defence\Tests\Filter;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
-use ThreeStreams\Defence\Filter\InvalidParameterFilter;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Filter\InvalidParameterFilter;
+use DanBettles\Defence\Filter\AbstractFilter;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
 use InvalidArgumentException;
 
 class InvalidParameterFilterTest extends TestCase

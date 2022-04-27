@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Logger\SlackLogger;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Factory\DefenceFactory;
-use ThreeStreams\Defence\Filter\SuspiciousUserAgentHeaderFilter;
-use ThreeStreams\Defence\Filter\InvalidParameterFilter;
+use DanBettles\Defence\Logger\SlackLogger;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Defence\Filter\InvalidParameterFilter;
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 

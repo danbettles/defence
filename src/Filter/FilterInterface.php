@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
-use ThreeStreams\Defence\Envelope;
+use DanBettles\Defence\Envelope;
 
 interface FilterInterface
 {

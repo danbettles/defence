@@ -2,10 +2,19 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
+use DanBettles\Defence\Envelope;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
+
+use function array_diff;
+use function array_filter;
+use function array_map;
+use function implode;
+use function sprintf;
+
+use const false;
+use const true;
 
 /**
  * Using the Symfony request object it is possible to simulate exotic HTTP methods (e.g. `PUT`) by making a `POST`
@@ -46,19 +55,19 @@ class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
         }
 
         //Pull out all override methods included in the request.
-        $overrideMethods = \array_map('\strtoupper', \array_filter([
+        $overrideMethods = array_map('\strtoupper', array_filter([
             $request->headers->get('X-HTTP-METHOD-OVERRIDE'),
             $request->request->get('_method'),
             $request->query->get('_method'),
         ]));
 
-        $invalidMethods = \array_diff($overrideMethods, self::VALID_METHODS);
+        $invalidMethods = array_diff($overrideMethods, self::VALID_METHODS);
 
         //Reject the request if any override method, found anywhere, is invalid.
         if (!empty($invalidMethods)) {
-            $logMessage = \sprintf(
+            $logMessage = sprintf(
                 'The request contains invalid override methods: %s',
-                \implode(', ', \array_map(function ($invalidMethod) {
+                implode(', ', array_map(function ($invalidMethod) {
                     return "`{$invalidMethod}`";
                 }, $invalidMethods))
             );

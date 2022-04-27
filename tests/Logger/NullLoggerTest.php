@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Logger;
+namespace DanBettles\Defence\Tests\Logger;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
-use ThreeStreams\Defence\Logger\NullLogger;
+use DanBettles\Defence\Logger\NullLogger;
 use ReflectionClass;
 
 class NullLoggerTest extends TestCase

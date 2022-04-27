@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Factory;
+namespace DanBettles\Defence\Factory;
 
 use Symfony\Component\HttpFoundation\Response;
 

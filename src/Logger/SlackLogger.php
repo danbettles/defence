@@ -2,15 +2,37 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Logger;
+namespace DanBettles\Defence\Logger;
 
+use Exception;
+use InvalidArgumentException;
+use Psr\Log\AbstractLogger;
+use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Psr\Log\LoggerInterface;
-use Psr\Log\AbstractLogger;
-use Psr\Log\LogLevel;
-use InvalidArgumentException;
-use Exception;
+
+use function array_replace;
+use function curl_close;
+use function curl_exec;
+use function curl_getinfo;
+use function curl_init;
+use function curl_setopt;
+use function filter_var;
+use function is_scalar;
+use function json_encode;
+use function print_r;
+use function sprintf;
+use function ucfirst;
+
+use const CURLOPT_CUSTOMREQUEST;
+use const CURLOPT_HTTPHEADER;
+use const CURLOPT_POSTFIELDS;
+use const CURLOPT_RETURNTRANSFER;
+use const CURLOPT_URL;
+use const FILTER_VALIDATE_URL;
+use const false;
+use const true;
 
 /**
  * A logger that sends log entries to Slack.
@@ -55,7 +77,7 @@ class SlackLogger extends AbstractLogger
     {
         $this
             ->setWebhookUrl($webhookUrl)
-            ->setOptions(\array_replace([
+            ->setOptions(array_replace([
                 'min_log_level' => LogLevel::DEBUG,
             ], $options))
         ;
@@ -66,7 +88,7 @@ class SlackLogger extends AbstractLogger
      */
     private function setWebhookUrl(string $url): self
     {
-        if (!\filter_var($url, FILTER_VALIDATE_URL)) {
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
             throw new InvalidArgumentException('The webhook URL is not a valid URL.');
         }
 
@@ -99,27 +121,27 @@ class SlackLogger extends AbstractLogger
      */
     protected function sendJsonToSlack(string $json): string
     {
-        $curl = \curl_init();
+        $curl = curl_init();
 
         if (false === $curl) {
             throw new Exception('Failed to initialize a new cURL session.');
         }
 
-        \curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 
-        \curl_setopt($curl, CURLOPT_CUSTOMREQUEST, Request::METHOD_POST);
-        \curl_setopt($curl, CURLOPT_URL, $this->getWebhookUrl());
-        \curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
-        \curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
+        curl_setopt($curl, CURLOPT_CUSTOMREQUEST, Request::METHOD_POST);
+        curl_setopt($curl, CURLOPT_URL, $this->getWebhookUrl());
+        curl_setopt($curl, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
+        curl_setopt($curl, CURLOPT_POSTFIELDS, $json);
 
-        $result = \curl_exec($curl);
+        $result = curl_exec($curl);
 
         if (true === $result) {
             throw new Exception("`curl_exec()` did not return the result.");
         }
 
-        $httpResponseCode = \curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
-        \curl_close($curl);
+        $httpResponseCode = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        curl_close($curl);
 
         if (false === $result || Response::HTTP_OK !== $httpResponseCode) {
             throw new Exception('Failed to send the JSON to Slack.');
@@ -154,9 +176,9 @@ class SlackLogger extends AbstractLogger
 
         foreach ($context as $name => $value) {
             //@codingStandardsIgnoreStart
-            $valueFormatted = \is_scalar($value)
+            $valueFormatted = is_scalar($value)
                 ? $value
-                : '```' . \print_r($value, true) . '```'
+                : '```' . print_r($value, true) . '```'
             ;
             //@codingStandardsIgnoreEnd
 
@@ -166,7 +188,7 @@ class SlackLogger extends AbstractLogger
             ];
         }
 
-        $this->sendJsonToSlack(\json_encode([
+        $this->sendJsonToSlack(json_encode([
             'text' => "{$logLevelEmoji} Defence handled suspicious request",
             'blocks' => [
                 [
@@ -180,7 +202,7 @@ class SlackLogger extends AbstractLogger
                     'type' => 'section',
                     'text' => [
                         'type' => 'mrkdwn',
-                        'text' => \sprintf("*%s %s: %s*", $logLevelEmoji, \ucfirst($level), $message),
+                        'text' => sprintf("*%s %s: %s*", $logLevelEmoji, ucfirst($level), $message),
                     ],
                 ],
                 [

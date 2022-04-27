@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Factory;
+namespace DanBettles\Defence\Tests\Factory;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Factory\EnvelopeFactory;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Logger\NullLogger;
+use DanBettles\Defence\Factory\EnvelopeFactory;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Logger\NullLogger;
 
 class EnvelopeFactoryTest extends TestCase
 {

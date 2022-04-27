@@ -2,22 +2,29 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Tests\Filter;
+namespace DanBettles\Defence\Tests\Filter;
 
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Filter\AbstractFilter;
+use DanBettles\Defence\Filter\BannedUserAgentHeaderFilter;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use ThreeStreams\Defence\Envelope;
-use ThreeStreams\Defence\Filter\AbstractFilter;
-use ThreeStreams\Defence\Filter\BannedUserAgentHeaderFilter;
-use ThreeStreams\Defence\Logger\NullLogger;
-use ThreeStreams\Defence\Tests\TestsFactory\RequestFactory;
+
+use function array_merge;
+use function is_subclass_of;
+
+use const false;
+use const null;
+use const true;
 
 class BannedUserAgentHeaderFilterTest extends TestCase
 {
     public function testIsAnAbstractfilter()
     {
-        $this->assertTrue(\is_subclass_of(BannedUserAgentHeaderFilter::class, AbstractFilter::class));
+        $this->assertTrue(is_subclass_of(BannedUserAgentHeaderFilter::class, AbstractFilter::class));
     }
 
     public function providesRequestsFromBannedUserAgents(): array
@@ -70,7 +77,7 @@ class BannedUserAgentHeaderFilterTest extends TestCase
 
     public function providesRequests(): array
     {
-        return \array_merge(
+        return array_merge(
             $this->providesRequestsFromBannedUserAgents(),
             $this->providesRequestsFromPermittedUserAgents()
         );

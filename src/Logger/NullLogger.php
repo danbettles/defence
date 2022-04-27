@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Logger;
+namespace DanBettles\Defence\Logger;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\AbstractLogger;

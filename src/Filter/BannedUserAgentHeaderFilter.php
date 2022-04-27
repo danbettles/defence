@@ -2,10 +2,17 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Filter;
+namespace DanBettles\Defence\Filter;
 
+use DanBettles\Defence\Envelope;
 use InvalidArgumentException;
-use ThreeStreams\Defence\Envelope;
+
+use function is_array;
+use function is_string;
+use function preg_match;
+
+use const false;
+use const true;
 
 /**
  * Rejects requests containing the specified user-agent string(s).
@@ -43,7 +50,7 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
         ;
 
         foreach ((array) $this->getSelector() as $selector) {
-            if (\preg_match($selector, $uaString)) {
+            if (preg_match($selector, $uaString)) {
                 $this->envelopeAddLogEntry($envelope, 'The request was made via a banned user agent.');
                 return true;
             }
@@ -60,7 +67,7 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
     {
         if (
             empty($selector)
-            || (!\is_array($selector) && !\is_string($selector))
+            || (!is_array($selector) && !is_string($selector))
         ) {
             throw new InvalidArgumentException('The selector is invalid.');
         }

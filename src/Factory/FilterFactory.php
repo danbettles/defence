@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Factory;
+namespace DanBettles\Defence\Factory;
 
-use ThreeStreams\Defence\Filter\InvalidParameterFilter;
+use DanBettles\Defence\Filter\InvalidParameterFilter;
 
 /**
  * Provides methods that create pre-configured filters.

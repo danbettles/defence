@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace ThreeStreams\Defence\Handler;
+namespace DanBettles\Defence\Handler;
 
-use ThreeStreams\Defence\Envelope;
+use DanBettles\Defence\Envelope;
 
 interface HandlerInterface
 {
