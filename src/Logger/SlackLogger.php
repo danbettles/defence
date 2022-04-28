@@ -178,7 +178,7 @@ class SlackLogger extends AbstractLogger
             //@codingStandardsIgnoreStart
             $valueFormatted = is_scalar($value)
                 ? $value
-                : '```' . print_r($value, true) . '```'
+                : '```' . /** @scrutinizer ignore-type */ print_r($value, true) . '```'
             ;
             //@codingStandardsIgnoreEnd
 
