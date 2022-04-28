@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests;
 
+use DanBettles\Defence\Defence;
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Filter\FilterInterface;
+use DanBettles\Defence\Handler\HandlerInterface;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Gestalt\SimpleFilterChain;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
-use DanBettles\Gestalt\SimpleFilterChain;
-use DanBettles\Defence\Envelope;
-use DanBettles\Defence\Logger\NullLogger;
-use DanBettles\Defence\Defence;
-use DanBettles\Defence\Handler\HandlerInterface;
-use DanBettles\Defence\Filter\FilterInterface;
 
 class DefenceTest extends TestCase
 {
@@ -20,6 +21,7 @@ class DefenceTest extends TestCase
         return new Envelope(Request::createFromGlobals(), new NullLogger());
     }
 
+    /** @return MockObject|HandlerInterface */
     private function createHandlerMock()
     {
         return $this
@@ -51,6 +53,7 @@ class DefenceTest extends TestCase
     {
         $envelope = $this->createEnvelope();
 
+        /** @var MockObject|SimpleFilterChain */
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
             ->onlyMethods(['execute'])
@@ -80,6 +83,7 @@ class DefenceTest extends TestCase
     {
         $envelope = $this->createEnvelope();
 
+        /** @var MockObject|SimpleFilterChain */
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
             ->onlyMethods(['execute'])

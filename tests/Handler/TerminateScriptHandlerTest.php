@@ -4,16 +4,17 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Handler;
 
-use PHPUnit\Framework\TestCase;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use DanBettles\Defence\Handler\TerminateScriptHandler;
-use DanBettles\Defence\Handler\HandlerInterface;
-use DanBettles\Defence\PhpFunctionsWrapper;
-use DanBettles\Defence\Logger\NullLogger;
 use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Factory\HttpResponseFactory;
+use DanBettles\Defence\Handler\HandlerInterface;
+use DanBettles\Defence\Handler\TerminateScriptHandler;
+use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\PhpFunctionsWrapper;
+use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase;
 use ReflectionClass;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class TerminateScriptHandlerTest extends TestCase
 {
@@ -62,6 +63,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         //Create a mock HTTP-response factory that will return our mock response:
 
+        /** @var MockObject|HttpResponseFactory */
         $httpResponseFactoryMock = $this
             ->getMockBuilder(HttpResponseFactory::class)
             ->onlyMethods(['createForbiddenResponse'])
@@ -77,6 +79,7 @@ class TerminateScriptHandlerTest extends TestCase
 
         //Mock the PHP-functions wrapper so we can test if the script will be terminated.
 
+        /** @var MockObject|PhpFunctionsWrapper */
         $phpFunctionsMock = $this
             ->getMockBuilder(PhpFunctionsWrapper::class)
             ->onlyMethods(['exit'])

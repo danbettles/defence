@@ -4,14 +4,15 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests;
 
+use DanBettles\Defence\Envelope;
+use DanBettles\Defence\Logger\NullLogger;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
-use DanBettles\Defence\Envelope;
-use DanBettles\Defence\Logger\NullLogger;
 
 class EnvelopeTest extends TestCase
 {
@@ -108,6 +109,7 @@ class EnvelopeTest extends TestCase
 
     //###> Factory Methods ###
 
+    /** @return MockObject|LoggerInterface */
     private function createLoggerMock()
     {
         return $this

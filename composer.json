@@ -46,7 +46,7 @@
         "psr-4": {"DanBettles\\Defence\\Tests\\": "tests/"}
     },
     "scripts": {
-        "app:test": "phpunit --bootstrap=vendor/autoload.php --colors=always --coverage-clover=var/phpunit/coverage.xml --whitelist=src tests",
+        "app:test": "phpunit",
         "app:lint": "phpcs --standard=phpcs.xml",
         "app:check-quality": [
             "@app:test",

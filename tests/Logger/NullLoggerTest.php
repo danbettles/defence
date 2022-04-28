@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Logger;
 
+use DanBettles\Defence\Logger\NullLogger;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
-use DanBettles\Defence\Logger\NullLogger;
 use ReflectionClass;
 
 class NullLoggerTest extends TestCase

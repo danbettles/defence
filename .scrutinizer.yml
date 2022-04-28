@@ -9,9 +9,9 @@ build:
       environment:
         php:
           version: 7.4
-      tests:
-        override:
-          - command: composer app:test
-            coverage:
-              file: var/phpunit/coverage.xml
-              format: php-clover
+      # tests:
+      #   override:
+      #     - command: composer app:test
+      #       coverage:
+      #         file: clover.xml
+      #         format: php-clover

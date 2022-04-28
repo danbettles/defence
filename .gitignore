@@ -1,4 +1,4 @@
+/.phpunit.cache/
 /vendor/
 
-/var/phpunit/*
-!/var/phpunit/.gitkeep
+clover.xml
