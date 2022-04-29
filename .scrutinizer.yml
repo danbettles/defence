@@ -1,17 +1,14 @@
 build:
   nodes:
-    analysis:
+    php81:
+      environment:
+        php:
+          version: 8.1
       tests:
         override:
           - phpcs-run
           - php-scrutinizer-run
-    my-tests:
-      environment:
-        php:
-          version: 7.4
-      # tests:
-      #   override:
-      #     - command: composer app:test
-      #       coverage:
-      #         file: clover.xml
-      #         format: php-clover
+          - command: composer app:test
+            coverage:
+              file: clover.xml
+              format: php-clover
