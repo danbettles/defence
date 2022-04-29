@@ -4,6 +4,8 @@ build:
       environment:
         php:
           version: 8.1
+          ini:
+              'xdebug.mode': 'coverage'
       tests:
         override:
           - phpcs-run
@@ -11,4 +13,4 @@ build:
           - command: composer app:test
             coverage:
               file: clover.xml
-              format: php-clover
+              format: clover
