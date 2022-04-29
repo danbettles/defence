@@ -1,5 +1,7 @@
 # Defence
 
+[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://stand-with-ukraine.pp.ua)
+
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/danbettles/defence/badges/quality-score.png?b=main)](https://scrutinizer-ci.com/g/danbettles/defence/?branch=main)[![Code Coverage](https://scrutinizer-ci.com/g/danbettles/defence/badges/coverage.png?b=main)](https://scrutinizer-ci.com/g/danbettles/defence/?branch=main)[![Build Status](https://scrutinizer-ci.com/g/danbettles/defence/badges/build.png?b=main)](https://scrutinizer-ci.com/g/danbettles/defence/build-status/main)
 
 A simple intrusion detection/prevention system framework written in PHP.
