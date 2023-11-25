@@ -7,6 +7,8 @@ namespace DanBettles\Defence;
 use DanBettles\Gestalt\SimpleFilterChain;
 use DanBettles\Defence\Handler\HandlerInterface;
 
+use const true;
+
 class Defence
 {
     /** @var SimpleFilterChain */
@@ -26,6 +28,7 @@ class Defence
     private function setFilterChain(SimpleFilterChain $filterChain): self
     {
         $this->filterChain = $filterChain;
+
         return $this;
     }
 
@@ -37,6 +40,7 @@ class Defence
     private function setHandler(HandlerInterface $handler): self
     {
         $this->handler = $handler;
+
         return $this;
     }
 

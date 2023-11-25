@@ -8,12 +8,19 @@ use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Factory\FilterFactory;
 use DanBettles\Defence\Filter\InvalidParameterFilter;
 use DanBettles\Defence\Logger\NullLogger;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
-use PHPUnit\Framework\TestCase;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use Psr\Log\LogLevel;
+use Symfony\Component\HttpFoundation\Request;
 
-class Createinvalidiso8601dateparameterfilterTest extends TestCase
+use const false;
+use const true;
+
+/**
+ * @phpstan-import-type Selector from InvalidParameterFilter
+ */
+class Createinvalidiso8601dateparameterfilterTest extends AbstractTestCase
 {
+    /** @return array<mixed[]> */
     public function providesFactoryMethodArgs(): array
     {
         return [[
@@ -27,9 +34,12 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
 
     /**
      * @dataProvider providesFactoryMethodArgs
+     * @phpstan-param Selector $selector
      */
-    public function testFactoryMethodCreatesAnInvalidparameterfilter($selector, $validator)
-    {
+    public function testFactoryMethodCreatesAnInvalidparameterfilter(
+        $selector,
+        string $validator
+    ): void {
         $filter = (new FilterFactory())->createInvalidIso8601DateParameterFilter($selector);
 
         $this->assertInstanceOf(InvalidParameterFilter::class, $filter);
@@ -37,7 +47,7 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
         $this->assertSame($validator, $filter->getValidator());
     }
 
-    public function testFactoryMethodAcceptsOptions()
+    public function testFactoryMethodAcceptsOptions(): void
     {
         $filter = (new FilterFactory())->createInvalidIso8601DateParameterFilter(['starts_on'], [
             'foo' => 'bar',
@@ -49,9 +59,10 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
         ], $filter->getOptions());
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsContainingAnInvalidParameter(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
 
         return [[
             false,
@@ -90,12 +101,13 @@ class Createinvalidiso8601dateparameterfilterTest extends TestCase
 
     /**
      * @dataProvider providesRequestsContainingAnInvalidParameter
+     * @phpstan-param Selector $selector
      */
     public function testInvokeReturnsTrueIfTheValueOfAParameterIsInvalid(
-        $requestIsSuspicious,
+        bool $requestIsSuspicious,
         $selector,
-        $request
-    ) {
+        Request $request
+    ): void {
         $filter = (new FilterFactory())->createInvalidIso8601DateParameterFilter($selector);
         $envelope = new Envelope($request, new NullLogger());
 

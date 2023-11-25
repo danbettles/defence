@@ -7,7 +7,6 @@ namespace DanBettles\Defence\Tests\Filter;
 use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Filter\FilterInterface;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
@@ -21,21 +20,21 @@ use const true;
 
 class AbstractFilterTest extends TestCase
 {
-    public function testIsAbstract()
+    public function testIsAbstract(): void
     {
         $reflectionClass = new ReflectionClass(AbstractFilter::class);
 
         $this->assertTrue($reflectionClass->isAbstract());
     }
 
-    public function testImplementsFilterinterface()
+    public function testImplementsFilterinterface(): void
     {
         $reflectionClass = new ReflectionClass(AbstractFilter::class);
 
         $this->assertTrue($reflectionClass->implementsInterface(FilterInterface::class));
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $filterMock = $this->getMockForAbstractClass(AbstractFilter::class, [
             'options' => [
@@ -51,7 +50,7 @@ class AbstractFilterTest extends TestCase
         ], $filterMock->getOptions());
     }
 
-    public function testOptionsAreOptional()
+    public function testOptionsAreOptional(): void
     {
         $filterMock = $this->getMockForAbstractClass(AbstractFilter::class);
 
@@ -60,13 +59,14 @@ class AbstractFilterTest extends TestCase
         ], $filterMock->getOptions());
     }
 
-    public function testAddlogentryIsProtected()
+    public function testAddlogentryIsProtected(): void
     {
         $reflectionMethod = new ReflectionMethod(AbstractFilter::class, 'envelopeAddLogEntry');
 
         $this->assertTrue($reflectionMethod->isProtected());
     }
 
+    /** @return array<mixed[]> */
     public function providesFiltersAndTheLogEntriesTheyAdd(): array
     {
         $returnValue = [];
@@ -81,6 +81,7 @@ class AbstractFilterTest extends TestCase
                 public function __invoke(Envelope $envelope): bool
                 {
                     $this->envelopeAddLogEntry($envelope, 'System is unusable.');
+
                     return true;
                 }
             },
@@ -93,6 +94,7 @@ class AbstractFilterTest extends TestCase
                 public function __invoke(Envelope $envelope): bool
                 {
                     $this->envelopeAddLogEntry($envelope, 'Exceptional occurrence that is not an error.');
+
                     return true;
                 }
             },
@@ -101,18 +103,18 @@ class AbstractFilterTest extends TestCase
         return $returnValue;
     }
 
-    /**
-     * @dataProvider providesFiltersAndTheLogEntriesTheyAdd
-     */
-    public function testAddlogentryAddsALogEntryToTheLogger($expectedLogLevel, $expectedLogMessage, $filter)
-    {
+    /** @dataProvider providesFiltersAndTheLogEntriesTheyAdd */
+    public function testAddlogentryAddsALogEntryToTheLogger(
+        string $expectedLogLevel,
+        string $expectedLogMessage,
+        AbstractFilter $filter
+    ): void {
         $minimalRequest = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
             'REQUEST_METHOD' => 'GET',
             'QUERY_STRING' => 'bar=baz&qux=quux',
         ]);
 
-        /** @var MockObject|LoggerInterface */
         $loggerMock = $this
             ->getMockBuilder(LoggerInterface::class)
             ->getMock()
@@ -127,6 +129,8 @@ class AbstractFilterTest extends TestCase
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
             ])
         ;
+
+        /** @var LoggerInterface $loggerMock */
 
         $filter(new Envelope($minimalRequest, $loggerMock));
     }

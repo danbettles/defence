@@ -8,14 +8,17 @@ use DanBettles\Defence\Filter\InvalidParameterFilter;
 
 /**
  * Provides methods that create pre-configured filters.
+ *
+ * @phpstan-import-type Selector from InvalidParameterFilter
+ * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
  */
 class FilterFactory
 {
     /**
      * Creates a filter that will reject requests containing a date parameter whose value is not the correct shape.
      *
-     * @param array|string $selector
-     * @param array $options
+     * @phpstan-param Selector $selector
+     * @phpstan-param FilterOptions $options
      */
     public function createInvalidIso8601DateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
@@ -29,8 +32,8 @@ class FilterFactory
      *
      * Expects dates to be formatted like "YYYY-MM-DD" or "DD-MM-YYYY".
      *
-     * @param array|string $selector
-     * @param array $options
+     * @phpstan-param Selector $selector
+     * @phpstan-param FilterOptions $options
      */
     public function createInvalidMachineDateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
@@ -44,8 +47,8 @@ class FilterFactory
      * Database ID (primary/foreign key) parameters are frequently targeted in SQL injection attacks.  Typically, these
      * sorts of database IDs are natural numbers, so that makes it very easy to identify suspicious requests.
      *
-     * @param array|string $selector
-     * @param array $options
+     * @phpstan-param Selector $selector
+     * @phpstan-param FilterOptions $options
      */
     public function createInvalidNumericIdParameterFilter($selector, array $options = []): InvalidParameterFilter
     {

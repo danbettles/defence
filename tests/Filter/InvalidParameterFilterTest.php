@@ -4,22 +4,30 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Filter;
 
-use PHPUnit\Framework\TestCase;
 use Psr\Log\NullLogger;
 use Psr\Log\LogLevel;
 use DanBettles\Defence\Filter\InvalidParameterFilter;
 use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Envelope;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Request;
 
-class InvalidParameterFilterTest extends TestCase
+use const false;
+use const null;
+use const true;
+
+/**
+ * @phpstan-import-type Selector from InvalidParameterFilter
+ */
+class InvalidParameterFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter()
+    public function testIsAnAbstractfilter(): void
     {
-        $this->assertTrue(is_subclass_of(InvalidParameterFilter::class, AbstractFilter::class));
+        $this->assertSubclassOf(AbstractFilter::class, InvalidParameterFilter::class);
     }
 
+    /** @return array<mixed[]> */
     public function providesConstructorArguments(): array
     {
         return [[
@@ -33,16 +41,19 @@ class InvalidParameterFilterTest extends TestCase
 
     /**
      * @dataProvider providesConstructorArguments
+     * @phpstan-param Selector $selector
      */
-    public function testConstructor($selector, $test)
-    {
-        $filter = new InvalidParameterFilter($selector, $test);
+    public function testConstructor(
+        $selector,
+        string $validator
+    ): void {
+        $filter = new InvalidParameterFilter($selector, $validator);
 
         $this->assertSame($selector, $filter->getSelector());
-        $this->assertSame($test, $filter->getValidator());
+        $this->assertSame($validator, $filter->getValidator());
     }
 
-    public function testConstructorAcceptsOptions()
+    public function testConstructorAcceptsOptions(): void
     {
         $filter = new InvalidParameterFilter([], '//', [
             'foo' => 'bar',
@@ -54,6 +65,7 @@ class InvalidParameterFilterTest extends TestCase
         ], $filter->getOptions());
     }
 
+    /** @return array<mixed[]> */
     public function providesInvalidSelectors(): array
     {
         return [[
@@ -69,20 +81,23 @@ class InvalidParameterFilterTest extends TestCase
 
     /**
      * @dataProvider providesInvalidSelectors
+     * @param mixed $invalidSelector
      */
-    public function testConstructorThrowsAnExceptionIfTheSelectorIsInvalid($invalidSelector)
+    public function testConstructorThrowsAnExceptionIfTheSelectorIsInvalid($invalidSelector): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The selector is invalid.');
 
+        /** @phpstan-ignore-next-line */
         new InvalidParameterFilter($invalidSelector, '//');
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsContainingInvalidParameters(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
 
-        return [[
+        $argLists = [[
             'requestIsSuspicious' => false,
             'request' => $requestFactory->createGet([]),
             'selector' => ['id'],  //Specific parameters.
@@ -134,22 +149,22 @@ class InvalidParameterFilterTest extends TestCase
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => false,
-            'request' => $requestFactory->createGet(['id' => ['123', '456']]),  //As in `?id[]=123&id[]=456`.
+            'request' => $requestFactory->createGet(['id' => ['123', '456']]),  // As in `?id[]=123&id[]=456`
             'selector' => ['id'],  //Specific parameters.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => false,
-            'request' => $requestFactory->createPost(['id' => ['123', '456']]),  //As in `?id[]=123&id[]=456`.
+            'request' => $requestFactory->createPost(['id' => ['123', '456']]),  // As in `?id[]=123&id[]=456`.
             'selector' => ['id'],  //Specific parameters.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => false,
-            'request' => $requestFactory->createGet(['valid_id' => ['123', '456']]),  //As in `?id[]=123&id[]=456`.
+            'request' => $requestFactory->createGet(['valid_id' => ['123', '456']]),  // As in `?id[]=123&id[]=456`.
             'selector' => '/_id$/',  //All parameters with names matching a regex.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => false,
-            'request' => $requestFactory->createPost(['valid_id' => ['123', '456']]),  //As in `?id[]=123&id[]=456`.
+            'request' => $requestFactory->createPost(['valid_id' => ['123', '456']]),  // As in `?id[]=123&id[]=456`.
             'selector' => '/_id$/',  //All parameters with names matching a regex.
             'test' => '/^\d*$/',
         ], [
@@ -174,96 +189,120 @@ class InvalidParameterFilterTest extends TestCase
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => true,
-            'request' => $requestFactory->createGet(['id' => ['123', "71094'A=0"]]),  //As in `?id[]=123&id[]=71094%27A%3D0`.
+            'request' => $requestFactory->createGet(['id' => ['123', "71094'A=0"]]),  // As in `?id[]=123&id[]=71094%27A%3D0`.
             'selector' => ['id'],  //Specific parameters.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => true,
-            'request' => $requestFactory->createPost(['id' => ['123', "71094'A=0"]]),  //As in `?id[]=123&id[]=71094%27A%3D0`.
+            'request' => $requestFactory->createPost(['id' => ['123', "71094'A=0"]]),  // As in `?id[]=123&id[]=71094%27A%3D0`.
             'selector' => ['id'],  //Specific parameters.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => true,
-            'request' => $requestFactory->createGet(['invalid_id' => ['123', "71094'A=0"]]),  //As in `?id[]=123&id[]=71094%27A%3D0`.
+            'request' => $requestFactory->createGet(['invalid_id' => ['123', "71094'A=0"]]),  // As in `?id[]=123&id[]=71094%27A%3D0`.
             'selector' => '/_id$/',  //All parameters with names matching a regex.
             'test' => '/^\d*$/',
         ], [
             'requestIsSuspicious' => true,
-            'request' => $requestFactory->createPost(['invalid_id' => ['123', "71094'A=0"]]),  //As in `?id[]=123&id[]=71094%27A%3D0`.
-            'selector' => '/_id$/',  //All parameters with names matching a regex.
-            'test' => '/^\d*$/',
-        ], [
-            'requestIsSuspicious' => false,
-            'request' => $requestFactory->createGet(['1564736436' => '']),  //The query string was `?1564736436=`.
-            'selector' => '/_id$/',  //All parameters with names matching a regex.
-            'test' => '/^\d*$/',
-        ], [
-            'requestIsSuspicious' => false,
-            'request' => $requestFactory->createPost(['1564736436' => '']),  //The query string was `?1564736436=`.
+            'request' => $requestFactory->createPost(['invalid_id' => ['123', "71094'A=0"]]),  // As in `?id[]=123&id[]=71094%27A%3D0`.
             'selector' => '/_id$/',  //All parameters with names matching a regex.
             'test' => '/^\d*$/',
         ]];
+
+        $getRequest = $requestFactory->createGet();
+        $getRequest->query->set('1564736436', '');  // The query string was `?1564736436=`
+
+        $argLists[] = [
+            'requestIsSuspicious' => false,
+            'request' => $getRequest,
+            'selector' => '/_id$/',  // All parameters with names matching a regex
+            'test' => '/^\d*$/',
+        ];
+
+        $postRequest = $requestFactory->createPost();
+        $postRequest->request->set('1564736436', '');  // The query string was `?1564736436=`
+
+        $argLists[] = [
+            'requestIsSuspicious' => false,
+            'request' => $postRequest,
+            'selector' => '/_id$/',  // All parameters with names matching a regex
+            'test' => '/^\d*$/',
+        ];
+
+        return $argLists;
     }
 
     /**
      * @dataProvider providesRequestsContainingInvalidParameters
+     * @phpstan-param Selector $selector
      */
     public function testInvokeReturnsTrueIfTheValueOfAParameterIsInvalid(
         bool $requestIsSuspicious,
-        $request,
+        Request $request,
         $selector,
-        $test
-    ) {
+        string $validator
+    ): void {
         $envelope = new Envelope($request, new NullLogger());
-        $filter = new InvalidParameterFilter($selector, $test);
+        $filter = new InvalidParameterFilter($selector, $validator);
 
         $this->assertSame($requestIsSuspicious, $filter($envelope));
     }
 
+    /** @return array<mixed[]> */
     public function providesLogMessages(): array
     {
-        return [[
-            'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
-            'selector' => ['foo_id'],
-            'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createGet(['foo_id' => 'bar']),
-        ], [
-            'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
-            'selector' => ['foo_id'],
-            'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createPost(['foo_id' => 'bar']),
-        ], [
-            'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
-            'selector' => '/_id$/',
-            'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createGet(['foo_id' => 'bar']),
-        ], [
-            'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
-            'selector' => '/_id$/',
-            'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createPost(['foo_id' => 'bar']),
-        ], [
-            'expectedMessage' => 'The value of `query.bar` failed validation using the regex `/^[a-z]+$/`.',
-            'selector' => ['bar'],
-            'validator' => '/^[a-z]+$/',  //A different regex.
-            'request' => (new RequestFactory())->createGet(['bar' => 'BAZ']),
-        ], [
-            'expectedMessage' => 'The value of `request.bar` failed validation using the regex `/^[a-z]+$/`.',
-            'selector' => ['bar'],
-            'validator' => '/^[a-z]+$/',  //A different regex.
-            'request' => (new RequestFactory())->createPost(['bar' => 'BAZ']),
-        ]];
+        $requestFactory = $this->getRequestFactory();
+
+        return [
+            [
+                'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
+                'selector' => ['foo_id'],
+                'validator' => '/^\d*$/',
+                'request' => $requestFactory->createGet(['foo_id' => 'bar']),
+            ],
+            [
+                'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
+                'selector' => ['foo_id'],
+                'validator' => '/^\d*$/',
+                'request' => $requestFactory->createPost(['foo_id' => 'bar']),
+            ],
+            [
+                'expectedMessage' => 'The value of `query.foo_id` failed validation using the regex `/^\d*$/`.',
+                'selector' => '/_id$/',
+                'validator' => '/^\d*$/',
+                'request' => $requestFactory->createGet(['foo_id' => 'bar']),
+            ],
+            [
+                'expectedMessage' => 'The value of `request.foo_id` failed validation using the regex `/^\d*$/`.',
+                'selector' => '/_id$/',
+                'validator' => '/^\d*$/',
+                'request' => $requestFactory->createPost(['foo_id' => 'bar']),
+            ],
+            [
+                'expectedMessage' => 'The value of `query.bar` failed validation using the regex `/^[a-z]+$/`.',
+                'selector' => ['bar'],
+                'validator' => '/^[a-z]+$/',  //A different regex.
+                'request' => $requestFactory->createGet(['bar' => 'BAZ']),
+            ],
+            [
+                'expectedMessage' => 'The value of `request.bar` failed validation using the regex `/^[a-z]+$/`.',
+                'selector' => ['bar'],
+                'validator' => '/^[a-z]+$/',  //A different regex.
+                'request' => $requestFactory->createPost(['bar' => 'BAZ']),
+            ],
+        ];
     }
 
     /**
      * @dataProvider providesLogMessages
+     * @phpstan-param Selector $selector
      */
     public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious(
-        $expectedMessage,
+        string $expectedMessage,
         $selector,
-        $validator,
-        $request
-    ) {
+        string $validator,
+        Request $request
+    ): void {
         $envelope = new Envelope($request, new NullLogger());
 
         $filterMock = $this
@@ -285,32 +324,39 @@ class InvalidParameterFilterTest extends TestCase
         $this->assertTrue($filterMock($envelope));
     }
 
+    /** @return array<mixed[]> */
     public function providesTrustfulRequests(): array
     {
+        $requestFactory = $this->getRequestFactory();
+
         return [[
             'selector' => ['foo_id'],
             'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createGet(['foo_id' => '123']),
+            'request' => $requestFactory->createGet(['foo_id' => '123']),
         ], [
             'selector' => ['foo_id'],
             'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createPost(['foo_id' => '123']),
+            'request' => $requestFactory->createPost(['foo_id' => '123']),
         ], [
             'selector' => '/_id$/',
             'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createGet(['foo_id' => '123']),
+            'request' => $requestFactory->createGet(['foo_id' => '123']),
         ], [
             'selector' => '/_id$/',
             'validator' => '/^\d*$/',
-            'request' => (new RequestFactory())->createPost(['foo_id' => '123']),
+            'request' => $requestFactory->createPost(['foo_id' => '123']),
         ]];
     }
 
     /**
      * @dataProvider providesTrustfulRequests
+     * @phpstan-param Selector $selector
      */
-    public function testInvokeWillNotAddALogEntryIfTheRequestIsNotSuspicious($selector, $validator, $request)
-    {
+    public function testInvokeWillNotAddALogEntryIfTheRequestIsNotSuspicious(
+        $selector,
+        string $validator,
+        Request $request
+    ): void {
         $envelope = new Envelope($request, new NullLogger());
 
         $filterMock = $this

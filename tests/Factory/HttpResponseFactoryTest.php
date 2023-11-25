@@ -10,7 +10,7 @@ use DanBettles\Defence\Factory\HttpResponseFactory;
 
 class HttpResponseFactoryTest extends TestCase
 {
-    public function testCreateforbiddenresponseCreatesAForbiddenResponse()
+    public function testCreateforbiddenresponseCreatesAForbiddenResponse(): void
     {
         $factory = new HttpResponseFactory();
         $response = $factory->createForbiddenResponse('Lorem ipsum dolor.');

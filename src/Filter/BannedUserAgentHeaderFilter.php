@@ -12,6 +12,7 @@ use function is_string;
 use function preg_match;
 
 use const false;
+use const null;
 use const true;
 
 /**
@@ -21,15 +22,20 @@ use const true;
  * can be used to quickly reject probing/harmful requests--requests sent via unusual user agents.  Commercial
  * screen-scraping apps identify themselves, and experienced programmers know to use a sensible user-agent string when
  * working with tools like cURL.
+ *
+ * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ * @phpstan-type Selector string|string[]
  */
 class BannedUserAgentHeaderFilter extends AbstractFilter
 {
-    /** @var array|string */
+    /**
+     * @phpstan-var Selector
+     */
     private $selector;
 
     /**
-     * @param array|string $selector  One/more regular expressions.
-     * @param array $options
+     * @phpstan-param Selector $selector  One/more regular expressions.
+     * @phpstan-param FilterOptions $options
      */
     public function __construct($selector, array $options = [])
     {
@@ -38,9 +44,6 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
         $this->setSelector($selector);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(Envelope $envelope): bool
     {
         $uaString = $envelope
@@ -49,9 +52,17 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
             ->get('User-Agent')
         ;
 
+        if (null === $uaString) {
+            // Since there's no user-agent header, we have nothing to check against our blacklist.  *In this context*,
+            // then, we have to treat the request as not suspicious -- even though it *is* suspicious that there's no
+            // user-agent header.
+            return false;
+        }
+
         foreach ((array) $this->getSelector() as $selector) {
             if (preg_match($selector, $uaString)) {
                 $this->envelopeAddLogEntry($envelope, 'The request was made via a banned user agent.');
+
                 return true;
             }
         }
@@ -60,16 +71,17 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
     }
 
     /**
-     * @param array|string $selector  One/more regular expressions.
-     * @throws InvalidArgumentException If the selector is invalid.
+     * @phpstan-param Selector $selector  One/more regular expressions.
+     * @throws InvalidArgumentException If the selector is invalid
      */
     private function setSelector($selector): self
     {
         if (
             empty($selector)
+            /** @phpstan-ignore-next-line */
             || (!is_array($selector) && !is_string($selector))
         ) {
-            throw new InvalidArgumentException('The selector is invalid.');
+            throw new InvalidArgumentException('The selector is invalid');
         }
 
         $this->selector = $selector;
@@ -78,7 +90,7 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
     }
 
     /**
-     * @return array|string
+     * @phpstan-return Selector
      */
     public function getSelector()
     {

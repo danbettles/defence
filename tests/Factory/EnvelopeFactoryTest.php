@@ -12,7 +12,7 @@ use DanBettles\Defence\Logger\NullLogger;
 
 class EnvelopeFactoryTest extends TestCase
 {
-    public function testCreatedefaultenvelopeReturnsAPreconfiguredEnvelope()
+    public function testCreatedefaultenvelopeReturnsAPreconfiguredEnvelope(): void
     {
         $envelope = (new EnvelopeFactory())->createDefaultEnvelope();
 

@@ -4,59 +4,60 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Filter;
 
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Logger\NullLogger;
 use DanBettles\Defence\Envelope;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Tests\AbstractTestCase;
 
-class SuspiciousUserAgentHeaderFilterTest extends TestCase
+use const false;
+use const true;
+
+class SuspiciousUserAgentHeaderFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter()
+    public function testIsAnAbstractfilter(): void
     {
-        $this->assertTrue(is_subclass_of(SuspiciousUserAgentHeaderFilter::class, AbstractFilter::class));
+        $this->assertSubclassOf(AbstractFilter::class, SuspiciousUserAgentHeaderFilter::class);
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsWithSuspiciousUserAgentHeader(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
 
         return [[
             true,
-            $requestFactory->createWithHeader('User-Agent', ''),
+            $requestFactory->createWithHeaders(['User-Agent' => '']),
         ], [
             false,
-            $requestFactory->createWithHeader('User-Agent', 'Something'),
+            $requestFactory->createWithHeaders(['User-Agent' => 'Something']),
         ], [
             true,
-            $requestFactory->createWithHeader('user-agent', ''),
+            $requestFactory->createWithHeaders(['user-agent' => '']),
         ], [
             false,
-            $requestFactory->createWithHeader('user-agent', 'Something'),
+            $requestFactory->createWithHeaders(['user-agent' => 'Something']),
         ], [
             true,
-            $requestFactory->createWithHeader('user-agent', ' '),
+            $requestFactory->createWithHeaders(['user-agent' => ' ']),
         ], [
             true,
-            $requestFactory->createWithHeader('user-agent', '   '),  //Much whitespace.
+            $requestFactory->createWithHeaders(['user-agent' => '   ']),  //Much whitespace.
         ], [
             true,
             Request::createFromGlobals(),  //No `User-Agent` header at all.
         ], [
             true,
-            $requestFactory->createWithHeader('User-Agent', '-'),
+            $requestFactory->createWithHeaders(['User-Agent' => '-']),
         ], [
             true,
-            $requestFactory->createWithHeader('User-Agent', ' - '),
+            $requestFactory->createWithHeaders(['User-Agent' => ' - ']),
         ]];
     }
 
-    /**
-     * @dataProvider providesRequestsWithSuspiciousUserAgentHeader
-     */
-    public function testInvokeReturnsTrueIfTheUserAgentHeaderIsSuspicious($expected, $request)
+    /** @dataProvider providesRequestsWithSuspiciousUserAgentHeader */
+    public function testInvokeReturnsTrueIfTheUserAgentHeaderIsSuspicious(bool $expected, Request $request): void
     {
         $envelope = new Envelope($request, new NullLogger());
         $filter = new SuspiciousUserAgentHeaderFilter();
@@ -64,10 +65,10 @@ class SuspiciousUserAgentHeaderFilterTest extends TestCase
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious()
+    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious(): void
     {
         $completeEnvelope = new Envelope(
-            (new RequestFactory())->createWithHeader('User-Agent', ''),  //Existent, but blank, UA header.
+            $this->getRequestFactory()->createWithHeaders(['User-Agent' => '']),  // Existent, but blank, UA header
             new NullLogger()
         );
 

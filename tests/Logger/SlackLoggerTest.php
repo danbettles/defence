@@ -5,24 +5,25 @@ declare(strict_types=1);
 namespace DanBettles\Defence\Tests\Logger;
 
 use DanBettles\Defence\Logger\SlackLogger;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use Exception;
 use InvalidArgumentException;
-use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
 
-use function is_subclass_of;
 use function json_encode;
 
-class SlackLoggerTest extends TestCase
+/**
+ * @phpstan-import-type Context from SlackLogger
+ */
+class SlackLoggerTest extends AbstractTestCase
 {
-    public function testIsAPsrAbstractlogger()
+    public function testIsAPsrAbstractlogger(): void
     {
-        $this->assertTrue(is_subclass_of(SlackLogger::class, AbstractLogger::class));
+        $this->assertSubclassOf(AbstractLogger::class, SlackLogger::class);
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $logger = new SlackLogger('https://hooks.slack.com/services/foo/bar/baz', ['foo' => 'bar']);
 
@@ -34,6 +35,7 @@ class SlackLoggerTest extends TestCase
         ], $logger->getOptions());
     }
 
+    /** @return array<mixed[]> */
     public function providesInvalidWebhookUrls(): array
     {
         return [[
@@ -43,10 +45,8 @@ class SlackLoggerTest extends TestCase
         ]];
     }
 
-    /**
-     * @dataProvider providesInvalidWebhookUrls
-     */
-    public function testConstructorThrowsAnExceptionIfTheWebhookUrlIsNotAValidUrl($invalidWebhookUrl)
+    /** @dataProvider providesInvalidWebhookUrls */
+    public function testConstructorThrowsAnExceptionIfTheWebhookUrlIsNotAValidUrl(string $invalidWebhookUrl): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The webhook URL is not a valid URL.');
@@ -54,7 +54,7 @@ class SlackLoggerTest extends TestCase
         new SlackLogger($invalidWebhookUrl, []);
     }
 
-    public function testOptionsAreOptional()
+    public function testOptionsAreOptional(): void
     {
         $logger = new SlackLogger('https://hooks.slack.com/services/foo/bar/baz');
 
@@ -63,6 +63,7 @@ class SlackLoggerTest extends TestCase
         ], $logger->getOptions());
     }
 
+    /** @return array<mixed[]> */
     public function providesLogMethodArguments(): array
     {
         return [[
@@ -110,9 +111,14 @@ class SlackLoggerTest extends TestCase
 
     /**
      * @dataProvider providesLogMethodArguments
+     * @phpstan-param Context $context
      */
-    public function testAllLogMethodsCallLog($level, $message, $context, $loggerMethodName)
-    {
+    public function testAllLogMethodsCallLog(
+        string $level,
+        string $message,
+        array $context,
+        string $loggerMethodName
+    ): void {
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -131,7 +137,7 @@ class SlackLoggerTest extends TestCase
         $slackLoggerMock->{$loggerMethodName}($message, $context);
     }
 
-    public function testLogWillSendAMessageToSlack()
+    public function testLogWillSendAMessageToSlack(): void
     {
         $level = LogLevel::ERROR;
         $message = 'Runtime error that does not require immediate action.';
@@ -166,7 +172,6 @@ class SlackLoggerTest extends TestCase
             ],
         ]);
 
-        /** @var MockObject|SlackLogger */
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -182,10 +187,12 @@ class SlackLoggerTest extends TestCase
             ->with($expectedJson)
         ;
 
+        /** @var SlackLogger $slackLoggerMock */
+
         $slackLoggerMock->log($level, $message, $context);
     }
 
-    public function testLogThrowsAnExceptionIfItFailedToCommunicateWithSlack()
+    public function testLogThrowsAnExceptionIfItFailedToCommunicateWithSlack(): void
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Failed to send the JSON to Slack.');
@@ -194,6 +201,7 @@ class SlackLoggerTest extends TestCase
         $logger->log(LogLevel::ERROR, 'bar');
     }
 
+    /** @return array<mixed[]> */
     public function providesLogLevelsThatWillTriggerAction(): array
     {
         return [[
@@ -244,12 +252,11 @@ class SlackLoggerTest extends TestCase
         ]];
     }
 
-    /**
-     * @dataProvider providesLogLevelsThatWillTriggerAction
-     */
-    public function testLogWillSendAMessageToSlackIfTheLogLevelIsHighEnough($logLevel, $minLogLevel)
-    {
-        /** @var MockObject|SlackLogger */
+    /** @dataProvider providesLogLevelsThatWillTriggerAction */
+    public function testLogWillSendAMessageToSlackIfTheLogLevelIsHighEnough(
+        string $logLevel,
+        string $minLogLevel
+    ): void {
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -265,9 +272,12 @@ class SlackLoggerTest extends TestCase
             ->method('sendJsonToSlack')
         ;
 
+        /** @var SlackLogger $slackLoggerMock */
+
         $slackLoggerMock->log($logLevel, 'Foo');
     }
 
+    /** @return array<mixed[]> */
     public function providesLogLevelsThatWillNotTriggerAction(): array
     {
         return [[
@@ -294,12 +304,11 @@ class SlackLoggerTest extends TestCase
         ]];
     }
 
-    /**
-     * @dataProvider providesLogLevelsThatWillNotTriggerAction
-     */
-    public function testLogWillNotSendAMessageToSlackIfTheLogLevelIsTooLow($logLevel, $minLogLevel)
-    {
-        /** @var MockObject|SlackLogger */
+    /** @dataProvider providesLogLevelsThatWillNotTriggerAction */
+    public function testLogWillNotSendAMessageToSlackIfTheLogLevelIsTooLow(
+        string $logLevel,
+        string $minLogLevel
+    ): void {
         $slackLoggerMock = $this
             ->getMockBuilder(SlackLogger::class)
             ->setConstructorArgs([
@@ -314,6 +323,8 @@ class SlackLoggerTest extends TestCase
             ->expects($this->never())
             ->method('sendJsonToSlack')
         ;
+
+        /** @var SlackLogger $slackLoggerMock */
 
         $slackLoggerMock->log($logLevel, 'Foo');
     }

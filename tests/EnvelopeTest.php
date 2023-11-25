@@ -16,7 +16,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 class EnvelopeTest extends TestCase
 {
-    public function testIsInstantiable()
+    //###> Factory Methods ###
+    private function createLoggerMock(): MockObject
+    {
+        return $this
+            ->getMockBuilder(LoggerInterface::class)
+            ->getMock()
+        ;
+    }
+    //###< Factory Methods ###
+
+    public function testIsInstantiable(): void
     {
         $request = Request::createFromGlobals();
         $logger = new NullLogger();
@@ -27,14 +37,14 @@ class EnvelopeTest extends TestCase
         $this->assertSame($logger, $envelope->getLogger());
     }
 
-    public function testImplementsPsrLoggerawareinterface()
+    public function testImplementsPsrLoggerawareinterface(): void
     {
         $reflectionClass = new ReflectionClass(Envelope::class);
 
         $this->assertTrue($reflectionClass->implementsInterface(LoggerAwareInterface::class));
     }
 
-    public function testAddlogAddsALogToTheLogger()
+    public function testAddlogAddsALogToTheLogger(): void
     {
         ($fullyLoadedRequestLoggerMock = $this->createLoggerMock())
             ->expects($this->once())
@@ -47,6 +57,8 @@ class EnvelopeTest extends TestCase
                 'referer' => 'grault',
             ])
         ;
+
+        /** @var LoggerInterface $fullyLoadedRequestLoggerMock */
 
         $fullyLoadedRequest = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
@@ -69,6 +81,8 @@ class EnvelopeTest extends TestCase
                 'uri' => 'http://foo.com/?bar=baz&qux=quux',
             ])
         ;
+
+        /** @var LoggerInterface $minimalRequestLoggerMock */
 
         $minimalRequest = new Request([], [], [], [], [], [
             'HTTP_HOST' => 'foo.com',
@@ -94,6 +108,8 @@ class EnvelopeTest extends TestCase
             ])
         ;
 
+        /** @var LoggerInterface $postRequestLoggerMock */
+
         $postRequest = new Request([], [
             'foo' => 'bar',
             'baz' => 'qux',
@@ -106,17 +122,4 @@ class EnvelopeTest extends TestCase
             ->addLogEntry(LogLevel::EMERGENCY, 'The request looks suspicious.')
         ;
     }
-
-    //###> Factory Methods ###
-
-    /** @return MockObject|LoggerInterface */
-    private function createLoggerMock()
-    {
-        return $this
-            ->getMockBuilder(LoggerInterface::class)
-            ->getMock()
-        ;
-    }
-
-    //###< Factory Methods ###
 }

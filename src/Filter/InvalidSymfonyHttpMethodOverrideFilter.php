@@ -8,12 +8,14 @@ use DanBettles\Defence\Envelope;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_diff;
-use function array_filter;
 use function array_map;
 use function implode;
+use function is_string;
 use function sprintf;
+use function strtoupper;
 
 use const false;
+use const null;
 use const true;
 
 /**
@@ -28,8 +30,10 @@ use const true;
  */
 class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
 {
-    /** @var string[] */
-    private const VALID_METHODS = [
+    /**
+     * @var string[]
+     */
+    public const VALID_METHODS = [
         Request::METHOD_HEAD,
         Request::METHOD_GET,
         Request::METHOD_POST,
@@ -42,41 +46,58 @@ class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
         Request::METHOD_CONNECT,
     ];
 
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(Envelope $envelope): bool
     {
         $request = $envelope->getRequest();
 
-        //We're interested in only `POST` requests.
-        if (Request::METHOD_POST !== $request->getRealMethod()) {
-            return false;
-        }
-
-        //Pull out all override methods included in the request.
-        $overrideMethods = array_map('\strtoupper', array_filter([
+        $allMethodOverrides = [
             $request->headers->get('X-HTTP-METHOD-OVERRIDE'),
             $request->request->get('_method'),
             $request->query->get('_method'),
-        ]));
+        ];
 
-        $invalidMethods = array_diff($overrideMethods, self::VALID_METHODS);
+        $filteredMethodOverrides = [];
 
-        //Reject the request if any override method, found anywhere, is invalid.
-        if (!empty($invalidMethods)) {
-            $logMessage = sprintf(
-                'The request contains invalid override methods: %s',
-                implode(', ', array_map(function ($invalidMethod) {
-                    return "`{$invalidMethod}`";
-                }, $invalidMethods))
-            );
+        foreach ($allMethodOverrides as $methodOverride) {
+            if (null === $methodOverride) {
+                continue;
+            }
 
-            $this->envelopeAddLogEntry($envelope, $logMessage);
+            if (!is_string($methodOverride)) {
+                $this->envelopeAddLogEntry($envelope, 'The type of the request-method override is invalid');
+
+                return true;
+            }
+
+            $filteredMethodOverrides[] = strtoupper($methodOverride);
+        }
+
+        if (!$filteredMethodOverrides) {
+            // Nothing at all to worry about
+            return false;
+        }
+
+        // (Request-method override present)
+
+        $invalidMethodOverrides = array_diff($filteredMethodOverrides, self::VALID_METHODS);
+
+        // Reject the request if any request-method override, found anywhere, is invalid
+        if ($invalidMethodOverrides) {
+            $this->envelopeAddLogEntry($envelope, sprintf(
+                'The request contains invalid request-method overrides: %s',
+                implode(
+                    ', ',
+                    array_map(fn ($invalidMethod) => "`{$invalidMethod}`", $invalidMethodOverrides)
+                )
+            ));
 
             return true;
         }
 
-        return false;
+        // (Valid request-method override present)
+
+        // A request-method override should accompany only `POST` requests, so if the method is something else and an
+        // override is present then the request is suspicious
+        return Request::METHOD_POST !== $request->getRealMethod();
     }
 }

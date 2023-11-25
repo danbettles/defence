@@ -7,7 +7,6 @@ namespace DanBettles\Defence\Logger;
 use Exception;
 use InvalidArgumentException;
 use Psr\Log\AbstractLogger;
-use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -40,10 +39,15 @@ use const true;
  * A message will be sent to Slack only if its log-level meets or exceeds the minimum log-level of the logger.  The
  * default minimum log-level of the logger is `"debug"` to ensure that, out of the box, the logger will send all
  * messages to Slack.
+ *
+ * @phpstan-type Context array<string,mixed>
+ * @phpstan-type LoggerOptions array<string,string>
  */
 class SlackLogger extends AbstractLogger
 {
-    /** @var int[] */
+    /**
+     * @var array<string,int>
+     */
     private const LOG_LEVEL_PRIORITY = [
         LogLevel::EMERGENCY => 8,
         LogLevel::ALERT => 7,
@@ -55,7 +59,9 @@ class SlackLogger extends AbstractLogger
         LogLevel::DEBUG => 1,
     ];
 
-    /** @var string[] */
+    /**
+     * @var array<string,string>
+     */
     private const LOG_LEVEL_EMOJI = [
         LogLevel::EMERGENCY => ':bangbang:',
         LogLevel::ALERT => ':bangbang:',
@@ -67,12 +73,19 @@ class SlackLogger extends AbstractLogger
         LogLevel::DEBUG => ':information_source:',
     ];
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $webhookUrl;
 
-    /** @var array */
+    /**
+     * @phpstan-var LoggerOptions
+     */
     private $options;
 
+    /**
+     * @phpstan-param LoggerOptions $options
+     */
     public function __construct(string $webhookUrl, array $options = [])
     {
         $this
@@ -102,6 +115,9 @@ class SlackLogger extends AbstractLogger
         return $this->webhookUrl;
     }
 
+    /**
+     * @phpstan-param LoggerOptions $options
+     */
     private function setOptions(array $options): self
     {
         $this->options = $options;
@@ -109,6 +125,9 @@ class SlackLogger extends AbstractLogger
         return $this;
     }
 
+    /**
+     * @phpstan-return LoggerOptions
+     */
     public function getOptions(): array
     {
         return $this->options;
@@ -121,6 +140,7 @@ class SlackLogger extends AbstractLogger
      */
     protected function sendJsonToSlack(string $json): string
     {
+        /** @var resource|false */
         $curl = curl_init();
 
         if (false === $curl) {
@@ -161,10 +181,12 @@ class SlackLogger extends AbstractLogger
     }
 
     /**
-     * {@inheritDoc}
-     * @see LoggerInterface::log()
+     * @see Psr\Log\LoggerInterface::log()
+     * @param string $level
+     * @param string $message
+     * @phpstan-param Context $context
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
         if (!$this->logLevelIsSufficient($level)) {
             return;
@@ -188,7 +210,8 @@ class SlackLogger extends AbstractLogger
             ];
         }
 
-        $this->sendJsonToSlack(json_encode([
+        /** @var string */
+        $json = json_encode([
             'text' => "{$logLevelEmoji} Defence handled suspicious request",
             'blocks' => [
                 [
@@ -210,6 +233,8 @@ class SlackLogger extends AbstractLogger
                     'elements' => $contextElements,
                 ],
             ],
-        ]));
+        ]);
+
+        $this->sendJsonToSlack($json);
     }
 }

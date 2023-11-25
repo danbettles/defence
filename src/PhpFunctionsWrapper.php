@@ -13,8 +13,9 @@ class PhpFunctionsWrapper
      * See https://www.php.net/manual/en/function.exit.php
      *
      * @param string|int $status
+     * @return never
      */
-    public function exit($status = 0): void
+    public function exit($status = 0)
     {
         //@codingStandardsIgnoreStart
         exit($status);

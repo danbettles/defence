@@ -8,11 +8,11 @@ use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 use DanBettles\Defence\Logger\NullLogger;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
-use PHPUnit\Framework\TestCase;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
-use function is_subclass_of;
+use function array_filter;
+use function strtolower;
 
 use const false;
 use const true;
@@ -20,119 +20,170 @@ use const true;
 /**
  * Start here: https://github.com/symfony/symfony/blob/4.3/src/Symfony/Component/HttpFoundation/Request.php#L1231
  */
-class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
+class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter()
+    //###> Factory Methods ###
+    /**
+     * @param mixed $overrideMethod Allow anything so we can try to break other code
+     */
+    private function createRequestWithMethodOverrideInTheBody(string $realMethod, $overrideMethod): Request
     {
-        $this->assertTrue(is_subclass_of(InvalidSymfonyHttpMethodOverrideFilter::class, AbstractFilter::class));
-    }
-
-    public function providesRequests(): array
-    {
-        $requestFactory = new RequestFactory();
-
-        return [
-            [true, $this->createPostRequestWithMethodOverrideInTheBody('foo')],
-            [true, $this->createPostRequestWithMethodOverrideInTheBody('FOO')],
-            [true, $this->createPostRequestWithMethodOverrideInTheBody('__construct')],
-
-            [true, $this->createPostRequestWithMethodOverrideInTheQuery('foo')],
-            [true, $this->createPostRequestWithMethodOverrideInTheQuery('FOO')],
-            [true, $this->createPostRequestWithMethodOverrideInTheQuery('__construct')],
-
-            [true, $this->createPostRequestWithMethodOverrideInAHeader('foo')],
-            [true, $this->createPostRequestWithMethodOverrideInAHeader('FOO')],
-            [true, $this->createPostRequestWithMethodOverrideInAHeader('__construct')],
-
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('HEAD')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('GET')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('POST')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('PUT')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('PATCH')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('DELETE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('PURGE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('OPTIONS')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('TRACE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('CONNECT')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('head')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('get')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('post')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('put')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('patch')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('delete')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('purge')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('options')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('trace')],
-            [false, $this->createPostRequestWithMethodOverrideInTheBody('connect')],
-
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('HEAD')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('GET')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('POST')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('PUT')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('PATCH')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('DELETE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('PURGE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('OPTIONS')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('TRACE')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('CONNECT')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('head')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('get')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('post')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('put')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('patch')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('delete')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('purge')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('options')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('trace')],
-            [false, $this->createPostRequestWithMethodOverrideInTheQuery('connect')],
-
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('HEAD')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('GET')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('POST')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('PUT')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('PATCH')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('DELETE')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('PURGE')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('OPTIONS')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('TRACE')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('CONNECT')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('head')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('get')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('post')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('put')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('patch')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('delete')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('purge')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('options')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('trace')],
-            [false, $this->createPostRequestWithMethodOverrideInAHeader('connect')],
-
-            [false, $this->createGetRequestWithMethodOverride('foo')],
-            [false, $this->createGetRequestWithMethodOverride('FOO')],
-            [false, $this->createGetRequestWithMethodOverride('__construct')],
-
-            [false, $requestFactory->createGet()],
-            [false, $requestFactory->createPost()],
-        ];
+        /** @var string $overrideMethod To keep PHPStan off our backs */
+        return $this->getRequestFactory()->create([
+            'method' => $realMethod,
+            'body' => [
+                '_method' => $overrideMethod,
+            ],
+        ]);
     }
 
     /**
-     * @dataProvider providesRequests
+     * @param mixed $overrideMethod Allow anything so we can try to break other code
      */
-    public function testInvokeReturnsTrueIfTheMethodOverrideIsInvalid($expected, $request)
+    private function createRequestWithMethodOverrideInTheQuery(string $realMethod, $overrideMethod): Request
     {
+        /** @var string $overrideMethod To keep PHPStan off our backs */
+        return $this->getRequestFactory()->create([
+            'method' => $realMethod,
+            'query' => [
+                '_method' => $overrideMethod,
+            ],
+        ]);
+    }
+
+    private function createRequestWithMethodOverrideInAHeader(string $realMethod, string $overrideMethod): Request
+    {
+        return $this->getRequestFactory()->create([
+            'method' => $realMethod,
+            'headers' => [
+                'X-Http-Method-Override' => $overrideMethod,
+            ],
+        ]);
+    }
+    //###< Factory Methods ###
+
+    public function testIsAnAbstractfilter(): void
+    {
+        $this->assertSubclassOf(AbstractFilter::class, InvalidSymfonyHttpMethodOverrideFilter::class);
+    }
+
+    /** @return array<mixed[]> */
+    public function providesRequests(): array
+    {
+        $requestFactory = $this->getRequestFactory();
+
+        $invalidOverrides = [
+            'foo',
+            'FOO',  // Still invalid
+            '__construct',  // Something we've seen in the wild
+        ];
+
+        $invalidOverrideInArray = ['foo' => 'bar'];
+
+        $argLists = [];
+
+        // Invalid overrides should *always* yield `true` (i.e. "yes, suspicious")
+        foreach (InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS as $validRealMethod) {
+            foreach ($invalidOverrides as $invalidOverride) {
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($validRealMethod, $invalidOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($validRealMethod, $invalidOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInAHeader($validRealMethod, $invalidOverride)];
+            }
+
+            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($validRealMethod, $invalidOverrideInArray)];
+            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($validRealMethod, $invalidOverrideInArray)];
+        }
+
+        $incompatibleRealMethods = array_filter(
+            InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS,
+            fn (string $methodName) => Request::METHOD_POST !== $methodName
+        );
+
+        // The method can be overridden only if the 'real' method is `POST`, so other types of request containing
+        // overrides are suspicious -- irrespective of the value submitted
+        foreach ($incompatibleRealMethods as $incompatibleRealMethod) {
+            foreach ($invalidOverrides as $invalidOverride) {
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($incompatibleRealMethod, $invalidOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($incompatibleRealMethod, $invalidOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInAHeader($incompatibleRealMethod, $invalidOverride)];
+            }
+
+            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($incompatibleRealMethod, $invalidOverrideInArray)];
+            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($incompatibleRealMethod, $invalidOverrideInArray)];
+
+            foreach (InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS as $validOverride) {
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($incompatibleRealMethod, $validOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($incompatibleRealMethod, $validOverride)];
+                $argLists[] = [true, $this->createRequestWithMethodOverrideInAHeader($incompatibleRealMethod, $validOverride)];
+            }
+        }
+
+        $compatibleRealMethod = Request::METHOD_POST;
+
+        foreach (InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS as $validOverride) {
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInTheBody($compatibleRealMethod, $validOverride)];
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInTheQuery($compatibleRealMethod, $validOverride)];
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInAHeader($compatibleRealMethod, $validOverride)];
+
+            $anotherValidOverride = strtolower($validOverride);
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInTheBody($compatibleRealMethod, $anotherValidOverride)];
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInTheQuery($compatibleRealMethod, $anotherValidOverride)];
+            $argLists[] = [false, $this->createRequestWithMethodOverrideInAHeader($compatibleRealMethod, $anotherValidOverride)];
+        }
+
+        // *Any* request without an override is okay, too :-)
+        foreach (InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS as $validRealMethod) {
+            $argLists[] = [false, $requestFactory->create(['method' => $validRealMethod])];
+        }
+
+        return $argLists;
+    }
+
+    /** @dataProvider providesRequests */
+    public function testInvokeReturnsTrueIfTheMethodOverrideIsInvalid(
+        bool $expected,
+        Request $request
+    ): void {
         $envelope = new Envelope($request, new NullLogger());
         $filter = new InvalidSymfonyHttpMethodOverrideFilter();
 
         $this->assertSame($expected, $filter($envelope));
     }
 
-    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious()
+    /** @return array<mixed[]> */
+    public function providesLogEntries(): array
     {
-        $envelope = new Envelope(
-            $this->createPostRequestWithMethodOverrideInTheQuery('foo'),
-            new NullLogger()
-        );
+        return [
+            [
+                'The request contains invalid request-method overrides: `FOO`',
+                $this->createRequestWithMethodOverrideInTheQuery(Request::METHOD_POST, 'foo'),
+            ],
+            [
+                'The request contains invalid request-method overrides: `BAR`',
+                $this->createRequestWithMethodOverrideInTheBody(Request::METHOD_POST, 'bar'),
+            ],
+            [
+                'The request contains invalid request-method overrides: `BAZ`',
+                $this->createRequestWithMethodOverrideInAHeader(Request::METHOD_POST, 'baz'),
+            ],
+            // An array is not permitted:
+            [
+                'The type of the request-method override is invalid',
+                $this->createRequestWithMethodOverrideInTheQuery(Request::METHOD_POST, []),
+            ],
+            [
+                'The type of the request-method override is invalid',
+                $this->createRequestWithMethodOverrideInTheBody(Request::METHOD_POST, []),
+            ],
+        ];
+    }
+
+    /** @dataProvider providesLogEntries */
+    public function testInvokeWillAddALogEntryIfTheRequestIsSuspicious(
+        string $expectedLogMessage,
+        Request $suspiciousRequest
+    ): void {
+        $envelope = new Envelope($suspiciousRequest, new NullLogger());
 
         $filterMock = $this
             ->getMockBuilder(InvalidSymfonyHttpMethodOverrideFilter::class)
@@ -143,43 +194,9 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends TestCase
         $filterMock
             ->expects($this->once())
             ->method('envelopeAddLogEntry')
-            ->with($envelope, 'The request contains invalid override methods: `FOO`')
+            ->with($envelope, $expectedLogMessage)
         ;
 
         $this->assertTrue($filterMock($envelope));
     }
-
-    //###> Factory Methods ###
-
-    private function createPostRequestWithMethodOverrideInTheBody(string $overrideMethod): Request
-    {
-        return (new RequestFactory())->createPost([
-            '_method' => $overrideMethod,
-        ]);
-    }
-
-    private function createPostRequestWithMethodOverrideInTheQuery(string $overrideMethod): Request
-    {
-        $postRequest = (new RequestFactory())->createPost();
-        $postRequest->query->set('_method', $overrideMethod);
-
-        return $postRequest;
-    }
-
-    private function createPostRequestWithMethodOverrideInAHeader(string $overrideMethod): Request
-    {
-        $postRequest = (new RequestFactory())->createPost();
-        $postRequest->headers->set('X-HTTP-METHOD-OVERRIDE', $overrideMethod);
-
-        return $postRequest;
-    }
-
-    private function createGetRequestWithMethodOverride(string $overrideMethod): Request
-    {
-        return (new RequestFactory())->createGet([
-            '_method' => $overrideMethod,
-        ]);
-    }
-
-    //###< Factory Methods ###
 }

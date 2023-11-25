@@ -12,7 +12,7 @@ use DanBettles\Defence\Defence;
 
 class DefenceFactoryTest extends AbstractTestCase
 {
-    public function testCreatedefaultdefencewithbasicfiltersReturnsAPreconfiguredDefence()
+    public function testCreatedefaultdefencewithbasicfiltersReturnsAPreconfiguredDefence(): void
     {
         $defence = (new DefenceFactory())->createDefaultDefenceWithBasicFilters();
 
@@ -26,7 +26,7 @@ class DefenceFactoryTest extends AbstractTestCase
         $this->assertInstanceOf(TerminateScriptHandler::class, $defence->getHandler());
     }
 
-    public function testCreatedefaultdefenceReturnsAPreconfiguredDefence()
+    public function testCreatedefaultdefenceReturnsAPreconfiguredDefence(): void
     {
         $defence = (new DefenceFactory())->createDefaultDefence();
 

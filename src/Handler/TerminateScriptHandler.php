@@ -27,6 +27,7 @@ class TerminateScriptHandler implements HandlerInterface
     private function setPhpFunctionsWrapper(PhpFunctionsWrapper $phpFunctions): self
     {
         $this->phpFunctions = $phpFunctions;
+
         return $this;
     }
 
@@ -38,6 +39,7 @@ class TerminateScriptHandler implements HandlerInterface
     private function setHttpResponseFactory(HttpResponseFactory $httpResponseFactory): self
     {
         $this->httpResponseFactory = $httpResponseFactory;
+
         return $this;
     }
 
@@ -46,6 +48,9 @@ class TerminateScriptHandler implements HandlerInterface
         return $this->httpResponseFactory;
     }
 
+    /**
+     * @return never
+     */
     public function __invoke(Envelope $envelope)
     {
         $this

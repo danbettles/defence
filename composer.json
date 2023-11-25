@@ -21,7 +21,7 @@
     "authors": [
         {
             "name": "Daniel Bettles",
-            "email": "danbettles@yahoo.co.uk",
+            "email": "daniel@justathought.dev",
             "role": "Developer"
         }
     ],
@@ -34,7 +34,8 @@
     "require-dev": {
         "phpunit/phpunit": "^9.0.2",
         "squizlabs/php_codesniffer": "^3.5.4",
-        "danbettles/codesniffer-standard": "^2.0.0"
+        "danbettles/codesniffer-standard": "^2.0.0",
+        "phpstan/phpstan": "^1.10"
     },
     "suggest": {
         "ext-curl": "If you want to use `SlackLogger`."
@@ -47,9 +48,11 @@
     },
     "scripts": {
         "app:test": "phpunit",
+        "app:analyse": "phpstan analyse -c phpstan.neon",
         "app:lint": "phpcs --standard=phpcs.xml",
         "app:check-quality": [
             "@app:test",
+            "@app:analyse",
             "@app:lint"
         ]
     }

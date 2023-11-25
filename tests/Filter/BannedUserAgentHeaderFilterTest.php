@@ -8,40 +8,44 @@ use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Filter\BannedUserAgentHeaderFilter;
 use DanBettles\Defence\Logger\NullLogger;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_merge;
-use function is_subclass_of;
 
 use const false;
 use const null;
 use const true;
 
-class BannedUserAgentHeaderFilterTest extends TestCase
+/**
+ * @phpstan-import-type Selector from BannedUserAgentHeaderFilter
+ */
+class BannedUserAgentHeaderFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter()
+    public function testIsAnAbstractfilter(): void
     {
-        $this->assertTrue(is_subclass_of(BannedUserAgentHeaderFilter::class, AbstractFilter::class));
+        $this->assertSubclassOf(AbstractFilter::class, BannedUserAgentHeaderFilter::class);
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsFromBannedUserAgents(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
+
+        $requestByPythonRequests = $requestFactory->createWithHeaders(['User-Agent' => 'python-requests/2.23.0']);
 
         return [
             [
                 true,
-                $requestFactory->createWithHeader('User-Agent', 'python-requests/2.23.0'),
+                $requestByPythonRequests,
                 [
                     '~python-requests/~',
                 ],
             ],
             [
                 true,
-                $requestFactory->createWithHeader('User-Agent', 'python-requests/2.23.0'),
+                $requestByPythonRequests,
                 [
                     '~foo~',
                     '~python-requests/~',
@@ -49,32 +53,44 @@ class BannedUserAgentHeaderFilterTest extends TestCase
             ],
             [
                 true,
-                $requestFactory->createWithHeader('User-Agent', 'python-requests/2.23.0'),
+                $requestByPythonRequests,
                 '~python-requests/~',
             ],
         ];
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsFromPermittedUserAgents(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
+
+        $requestByMozilla = $requestFactory->createWithHeaders(['User-Agent' => 'Mozilla/5.0 ...']);
+        $requestByUnknown = $requestFactory->createGet();
 
         return [
             [
                 false,
-                $requestFactory->createWithHeader('User-Agent', 'Mozilla/5.0 ...'),
+                $requestByMozilla,
                 [
                     '~python-requests/~',
                 ],
             ],
             [
                 false,
-                $requestFactory->createWithHeader('User-Agent', 'Mozilla/5.0 ...'),
+                $requestByMozilla,
+                '~python-requests/~',
+            ],
+            // "Not suspicious *in this context*, no".  The request is suspicious because it has no UA, but the UA is
+            // not blacklisted.
+            [
+                false,
+                $requestByUnknown,
                 '~python-requests/~',
             ],
         ];
     }
 
+    /** @return array<mixed[]> */
     public function providesRequests(): array
     {
         return array_merge(
@@ -85,9 +101,13 @@ class BannedUserAgentHeaderFilterTest extends TestCase
 
     /**
      * @dataProvider providesRequests
+     * @phpstan-param Selector $selector
      */
-    public function testInvokeReturnsTrueIfTheUserAgentIsBanned(bool $expected, Request $request, $selector)
-    {
+    public function testInvokeReturnsTrueIfTheUserAgentIsBanned(
+        bool $expected,
+        Request $request,
+        $selector
+    ): void {
         $envelope = new Envelope($request, new NullLogger());
         $filter = new BannedUserAgentHeaderFilter($selector);
 
@@ -96,12 +116,13 @@ class BannedUserAgentHeaderFilterTest extends TestCase
 
     /**
      * @dataProvider providesRequestsFromBannedUserAgents
+     * @phpstan-param Selector $selector
      */
     public function testInvokeWillAddALogEntryIfTheRequestIsFromABannedUserAgent(
         bool $expected,
         Request $request,
         $selector
-    ) {
+    ): void {
         $completeEnvelope = new Envelope($request, new NullLogger());
 
         $filterMock = $this
@@ -124,12 +145,13 @@ class BannedUserAgentHeaderFilterTest extends TestCase
 
     /**
      * @dataProvider providesRequestsFromPermittedUserAgents
+     * @phpstan-param Selector $selector
      */
     public function testInvokeWillNotAddALogEntryIfTheRequestIsFromAPermittedUserAgent(
         bool $expected,
         Request $request,
         $selector
-    ) {
+    ): void {
         $completeEnvelope = new Envelope($request, new NullLogger());
 
         $filterMock = $this
@@ -149,6 +171,7 @@ class BannedUserAgentHeaderFilterTest extends TestCase
         $this->assertSame($expected, $filterMock($completeEnvelope));
     }
 
+    /** @return array<mixed[]> */
     public function providesInvalidSelectors(): array
     {
         return [
@@ -169,12 +192,14 @@ class BannedUserAgentHeaderFilterTest extends TestCase
 
     /**
      * @dataProvider providesInvalidSelectors
+     * @param mixed $invalidSelector
      */
-    public function testThrowsAnExceptionIfTheSelectorIsInvalid($invalidSelector)
+    public function testThrowsAnExceptionIfTheSelectorIsInvalid($invalidSelector): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The selector is invalid.');
+        $this->expectExceptionMessage('The selector is invalid');
 
+        /** @phpstan-ignore-next-line */
         new BannedUserAgentHeaderFilter($invalidSelector);
     }
 }

@@ -10,6 +10,8 @@ interface HandlerInterface
 {
     /**
      * Does something about the fact the request is considered suspicious.
+     *
+     * @return mixed
      */
     public function __invoke(Envelope $envelope);
 }

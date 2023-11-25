@@ -28,6 +28,7 @@ class Envelope implements LoggerAwareInterface
     private function setRequest(Request $request): self
     {
         $this->request = $request;
+
         return $this;
     }
 
@@ -37,7 +38,6 @@ class Envelope implements LoggerAwareInterface
     }
 
     /**
-     * {@inheritDoc}
      * @see LoggerAwareInterface::setLogger()
      */
     public function setLogger(LoggerInterface $logger)

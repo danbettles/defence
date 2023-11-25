@@ -21,9 +21,6 @@ use const true;
  */
 class SuspiciousUserAgentHeaderFilter extends AbstractFilter
 {
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(Envelope $envelope): bool
     {
         $uaString = $envelope
@@ -34,6 +31,7 @@ class SuspiciousUserAgentHeaderFilter extends AbstractFilter
 
         if (null === $uaString) {
             $this->envelopeAddLogEntry($envelope, 'The request has no UA string.');
+
             return true;
         }
 
@@ -41,6 +39,7 @@ class SuspiciousUserAgentHeaderFilter extends AbstractFilter
 
         if ('' === $uaStringTrimmed || '-' === $uaStringTrimmed) {
             $this->envelopeAddLogEntry($envelope, 'The request has a suspicious UA string.');
+
             return true;
         }
 

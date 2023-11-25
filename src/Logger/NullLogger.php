@@ -16,10 +16,9 @@ use Psr\Log\AbstractLogger;
 class NullLogger extends AbstractLogger
 {
     /**
-     * {@inheritDoc}
      * @see LoggerInterface::log()
      */
-    public function log($level, $message, array $context = array())
+    public function log($level, $message, array $context = [])
     {
     }
 }

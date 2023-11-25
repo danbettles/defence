@@ -4,16 +4,23 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Factory;
 
-use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
-use DanBettles\Defence\Tests\TestsFactory\RequestFactory;
 use DanBettles\Defence\Envelope;
 use DanBettles\Defence\Factory\FilterFactory;
 use DanBettles\Defence\Filter\InvalidParameterFilter;
 use DanBettles\Defence\Logger\NullLogger;
+use DanBettles\Defence\Tests\AbstractTestCase;
+use Symfony\Component\HttpFoundation\Request;
 
-class CreateinvalidnumericidparameterfilterTest extends TestCase
+use const false;
+use const true;
+
+/**
+ * @phpstan-import-type Selector from InvalidParameterFilter
+ */
+class CreateinvalidnumericidparameterfilterTest extends AbstractTestCase
 {
+    /** @return array<mixed[]> */
     public function providesFactoryMethodArgs(): array
     {
         return [[
@@ -27,9 +34,12 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
 
     /**
      * @dataProvider providesFactoryMethodArgs
+     * @phpstan-param Selector $selector
      */
-    public function testFactoryMethodCreatesAnInvalidparameterfilter($selector, $validator)
-    {
+    public function testFactoryMethodCreatesAnInvalidparameterfilter(
+        $selector,
+        string $validator
+    ): void {
         $filter = (new FilterFactory())->createInvalidNumericIdParameterFilter($selector);
 
         $this->assertInstanceOf(InvalidParameterFilter::class, $filter);
@@ -37,7 +47,7 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
         $this->assertSame($validator, $filter->getValidator());
     }
 
-    public function testFactoryMethodAcceptsOptions()
+    public function testFactoryMethodAcceptsOptions(): void
     {
         $filter = (new FilterFactory())->createInvalidNumericIdParameterFilter(['id'], [
             'quux' => 'quz',
@@ -49,9 +59,10 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
         ], $filter->getOptions());
     }
 
+    /** @return array<mixed[]> */
     public function providesRequestsContainingAnInvalidParameter(): array
     {
-        $requestFactory = new RequestFactory();
+        $requestFactory = $this->getRequestFactory();
 
         return [[
             false,
@@ -82,12 +93,13 @@ class CreateinvalidnumericidparameterfilterTest extends TestCase
 
     /**
      * @dataProvider providesRequestsContainingAnInvalidParameter
+     * @phpstan-param Selector $selector
      */
     public function testInvokeReturnsTrueIfTheValueOfAParameterIsInvalid(
-        $requestIsSuspicious,
+        bool $requestIsSuspicious,
         $selector,
-        $request
-    ) {
+        Request $request
+    ): void {
         $filter = (new FilterFactory())->createInvalidNumericIdParameterFilter($selector);
         $envelope = new Envelope($request, new NullLogger());
 

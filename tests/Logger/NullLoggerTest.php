@@ -5,18 +5,18 @@ declare(strict_types=1);
 namespace DanBettles\Defence\Tests\Logger;
 
 use DanBettles\Defence\Logger\NullLogger;
-use PHPUnit\Framework\TestCase;
+use DanBettles\Defence\Tests\AbstractTestCase;
 use Psr\Log\AbstractLogger;
 use ReflectionClass;
 
-class NullLoggerTest extends TestCase
+class NullLoggerTest extends AbstractTestCase
 {
-    public function testIsAPsrAbstractlogger()
+    public function testIsAPsrAbstractlogger(): void
     {
-        $this->assertTrue(is_subclass_of(NullLogger::class, AbstractLogger::class));
+        $this->assertSubclassOf(AbstractLogger::class, NullLogger::class);
     }
 
-    public function testIsConcrete()
+    public function testIsConcrete(): void
     {
         $reflectionClass = new ReflectionClass(NullLogger::class);
 

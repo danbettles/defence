@@ -10,7 +10,6 @@ use DanBettles\Defence\Handler\HandlerInterface;
 use DanBettles\Defence\Handler\TerminateScriptHandler;
 use DanBettles\Defence\Logger\NullLogger;
 use DanBettles\Defence\PhpFunctionsWrapper;
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
 use Symfony\Component\HttpFoundation\Request;
@@ -18,14 +17,14 @@ use Symfony\Component\HttpFoundation\Response;
 
 class TerminateScriptHandlerTest extends TestCase
 {
-    public function testImplementsHandlerinterface()
+    public function testImplementsHandlerinterface(): void
     {
         $reflectionClass = new ReflectionClass(TerminateScriptHandler::class);
 
         $this->assertTrue($reflectionClass->implementsInterface(HandlerInterface::class));
     }
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $phpFunctions = new PhpFunctionsWrapper();
         $httpResponseFactory = new HttpResponseFactory();
@@ -36,7 +35,7 @@ class TerminateScriptHandlerTest extends TestCase
         $this->assertSame($httpResponseFactory, $handler->getHttpResponseFactory());
     }
 
-    public function testInvokeTerminatesTheScript()
+    public function testInvokeTerminatesTheScript(): void
     {
         $request = Request::createFromGlobals();
 
@@ -63,7 +62,6 @@ class TerminateScriptHandlerTest extends TestCase
 
         //Create a mock HTTP-response factory that will return our mock response:
 
-        /** @var MockObject|HttpResponseFactory */
         $httpResponseFactoryMock = $this
             ->getMockBuilder(HttpResponseFactory::class)
             ->onlyMethods(['createForbiddenResponse'])
@@ -77,9 +75,10 @@ class TerminateScriptHandlerTest extends TestCase
             ->willReturn($httpResponseMock)
         ;
 
+        /** @var HttpResponseFactory $httpResponseFactoryMock */
+
         //Mock the PHP-functions wrapper so we can test if the script will be terminated.
 
-        /** @var MockObject|PhpFunctionsWrapper */
         $phpFunctionsMock = $this
             ->getMockBuilder(PhpFunctionsWrapper::class)
             ->onlyMethods(['exit'])
@@ -91,6 +90,8 @@ class TerminateScriptHandlerTest extends TestCase
             ->method('exit')
             ->with(0)
         ;
+
+        /** @var PhpFunctionsWrapper $phpFunctionsMock */
 
         //Run the handler:
 

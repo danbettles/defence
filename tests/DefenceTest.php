@@ -14,15 +14,18 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 
+use const false;
+use const true;
+
 class DefenceTest extends TestCase
 {
+    //###> Factory Methods ###
     private function createEnvelope(): Envelope
     {
         return new Envelope(Request::createFromGlobals(), new NullLogger());
     }
 
-    /** @return MockObject|HandlerInterface */
-    private function createHandlerMock()
+    private function createHandlerMock(): MockObject
     {
         return $this
             ->getMockBuilder(HandlerInterface::class)
@@ -30,18 +33,21 @@ class DefenceTest extends TestCase
         ;
     }
 
-    private function createFilterMock()
+    private function createFilterMock(): MockObject
     {
         return $this
             ->getMockBuilder(FilterInterface::class)
             ->getMock()
         ;
     }
+    //###< Factory Methods ###
 
-    public function testConstructor()
+    public function testConstructor(): void
     {
         $filterChain = new SimpleFilterChain([]);
         $handlerMock = $this->createHandlerMock();
+
+        /** @var HandlerInterface $handlerMock */
 
         $defence = new Defence($filterChain, $handlerMock);
 
@@ -49,11 +55,10 @@ class DefenceTest extends TestCase
         $this->assertSame($handlerMock, $defence->getHandler());
     }
 
-    public function testExecuteExecutesTheHandlerIfTheRequestIsSuspicious()
+    public function testExecuteExecutesTheHandlerIfTheRequestIsSuspicious(): void
     {
         $envelope = $this->createEnvelope();
 
-        /** @var MockObject|SimpleFilterChain */
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
             ->onlyMethods(['execute'])
@@ -67,6 +72,8 @@ class DefenceTest extends TestCase
             ->willReturn(true)  //Simulate request is suspicious.
         ;
 
+        /** @var SimpleFilterChain $filterChainMock */
+
         $handlerMock = $this->createHandlerMock();
 
         $handlerMock
@@ -75,15 +82,16 @@ class DefenceTest extends TestCase
             ->with($envelope)
         ;
 
+        /** @var HandlerInterface $handlerMock */
+
         $defence = new Defence($filterChainMock, $handlerMock);
         $defence->execute($envelope);
     }
 
-    public function testExecuteWillNotExecuteTheHandlerIfTheRequestIsNotSuspicious()
+    public function testExecuteWillNotExecuteTheHandlerIfTheRequestIsNotSuspicious(): void
     {
         $envelope = $this->createEnvelope();
 
-        /** @var MockObject|SimpleFilterChain */
         $filterChainMock = $this
             ->getMockBuilder(SimpleFilterChain::class)
             ->onlyMethods(['execute'])
@@ -97,6 +105,8 @@ class DefenceTest extends TestCase
             ->willReturn(false)  //Simulate request is _not_ suspicious.
         ;
 
+        /** @var SimpleFilterChain $filterChainMock */
+
         $handlerMock = $this->createHandlerMock();
 
         $handlerMock
@@ -104,11 +114,13 @@ class DefenceTest extends TestCase
             ->method('__invoke')
         ;
 
+        /** @var HandlerInterface $handlerMock */
+
         $defence = new Defence($filterChainMock, $handlerMock);
         $defence->execute($envelope);
     }
 
-    public function testEachFilterInTheFilterChainIsInvoked()
+    public function testEachFilterInTheFilterChainIsInvoked(): void
     {
         $envelope = $this->createEnvelope();
 
@@ -144,6 +156,7 @@ class DefenceTest extends TestCase
         ]);
 
         $handlerMock = $this->createHandlerMock();
+        /** @var HandlerInterface $handlerMock */
 
         $defence = new Defence($filterChain, $handlerMock);
         $defence->execute($envelope);

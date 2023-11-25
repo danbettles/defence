@@ -12,12 +12,19 @@ use function array_replace;
 /**
  * The default log-level of a filter extending this class is `LogLevel::WARNING`.  That value can be overridden by
  * setting the `log_level` option.  The log-level is used by the add-log-entry convenience method.
+ *
+ * @phpstan-type FilterOptions array<string,string>
  */
 abstract class AbstractFilter implements FilterInterface
 {
-    /** @var array */
+    /**
+     * @phpstan-var FilterOptions
+     */
     private $options;
 
+    /**
+     * @phpstan-param FilterOptions $options
+     */
     public function __construct(array $options = [])
     {
         $this->setOptions(array_replace([
@@ -25,12 +32,19 @@ abstract class AbstractFilter implements FilterInterface
         ], $options));
     }
 
+    /**
+     * @phpstan-param FilterOptions $options
+     */
     private function setOptions(array $options): self
     {
         $this->options = $options;
+
         return $this;
     }
 
+    /**
+     * @phpstan-return FilterOptions
+     */
     public function getOptions(): array
     {
         return $this->options;

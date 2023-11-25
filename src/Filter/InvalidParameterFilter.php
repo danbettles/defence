@@ -32,19 +32,28 @@ use const true;
  * indicate date/times then you could easily select date parameters.
  *
  * The validity of the value is determined using the 'validator', a regular expression that matches a _valid_ value.
+ *
+ * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ * @phpstan-type Selector string|string[]
+ * @phpstan-type RequestParameters array<string,string>
+ * @phpstan-type GroupedParameters array{query?:RequestParameters,request?:RequestParameters}
  */
 class InvalidParameterFilter extends AbstractFilter
 {
-    /** @var array|string */
+    /**
+     * @phpstan-var Selector
+     */
     private $selector;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     private $validator;
 
     /**
-     * @param array|string $selector
+     * @phpstan-param Selector $selector
      * @param string $validator
-     * @param array $options
+     * @phpstan-param FilterOptions $options
      */
     public function __construct($selector, string $validator, array $options = [])
     {
@@ -57,11 +66,12 @@ class InvalidParameterFilter extends AbstractFilter
     }
 
     /**
-     * @param array|string $selector
+     * @phpstan-param Selector $selector
      * @throws InvalidArgumentException If the selector is invalid.
      */
     private function setSelector($selector): self
     {
+        /** @phpstan-ignore-next-line */
         if (!is_array($selector) && !is_string($selector)) {
             throw new InvalidArgumentException('The selector is invalid.');
         }
@@ -72,7 +82,7 @@ class InvalidParameterFilter extends AbstractFilter
     }
 
     /**
-     * @return array|string
+     * @phpstan-return Selector
      */
     public function getSelector()
     {
@@ -82,6 +92,7 @@ class InvalidParameterFilter extends AbstractFilter
     private function setValidator(string $validator): self
     {
         $this->validator = $validator;
+
         return $this;
     }
 
@@ -92,6 +103,8 @@ class InvalidParameterFilter extends AbstractFilter
 
     /**
      * Returns an array containing all request parameters, grouped by parameter-bag name.
+     *
+     * @phpstan-return GroupedParameters
      */
     private function requestGetParametersGrouped(Request $request): array
     {
@@ -106,7 +119,9 @@ class InvalidParameterFilter extends AbstractFilter
 
     /**
      * Filters the request parameters using the selector; returns an array containing the relevant request parameters
-     * grouped by parameter-bag name.
+     * grouped by parameter-bag name
+     *
+     * @phpstan-return GroupedParameters
      */
     private function filterRequestParametersBySelector(Request $request): array
     {
@@ -157,9 +172,6 @@ class InvalidParameterFilter extends AbstractFilter
         return false;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(Envelope $envelope): bool
     {
         $filteredParamsByBagName = $this->filterRequestParametersBySelector($envelope->getRequest());
