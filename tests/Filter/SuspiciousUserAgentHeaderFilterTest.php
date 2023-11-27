@@ -16,7 +16,7 @@ use const true;
 
 class SuspiciousUserAgentHeaderFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter(): void
+    public function testIsAFilter(): void
     {
         $this->assertSubclassOf(AbstractFilter::class, SuspiciousUserAgentHeaderFilter::class);
     }

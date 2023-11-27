@@ -23,7 +23,8 @@ use const true;
  * screen-scraping apps identify themselves, and experienced programmers know to use a sensible user-agent string when
  * working with tools like cURL.
  *
- * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ * @phpstan-import-type IncomingFilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ *
  * @phpstan-type Selector string|string[]
  */
 class BannedUserAgentHeaderFilter extends AbstractFilter
@@ -35,7 +36,7 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
 
     /**
      * @phpstan-param Selector $selector  One/more regular expressions.
-     * @phpstan-param FilterOptions $options
+     * @phpstan-param IncomingFilterOptions $options
      */
     public function __construct($selector, array $options = [])
     {

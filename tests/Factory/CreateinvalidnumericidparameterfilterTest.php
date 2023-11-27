@@ -13,6 +13,7 @@ use DanBettles\Defence\Tests\AbstractTestCase;
 use Symfony\Component\HttpFoundation\Request;
 
 use const false;
+use const null;
 use const true;
 
 /**
@@ -55,6 +56,7 @@ class CreateinvalidnumericidparameterfilterTest extends AbstractTestCase
 
         $this->assertSame([
             'log_level' => LogLevel::WARNING,
+            'type' => null,
             'quux' => 'quz',
         ], $filter->getOptions());
     }

@@ -62,7 +62,7 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
     }
     //###< Factory Methods ###
 
-    public function testIsAnAbstractfilter(): void
+    public function testIsAFilter(): void
     {
         $this->assertSubclassOf(AbstractFilter::class, InvalidSymfonyHttpMethodOverrideFilter::class);
     }

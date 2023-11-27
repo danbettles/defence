@@ -10,7 +10,8 @@ use DanBettles\Defence\Filter\InvalidParameterFilter;
  * Provides methods that create pre-configured filters.
  *
  * @phpstan-import-type Selector from InvalidParameterFilter
- * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ *
+ * @phpstan-type FactoryMethodOptions array<string,string|null>
  */
 class FilterFactory
 {
@@ -18,7 +19,7 @@ class FilterFactory
      * Creates a filter that will reject requests containing a date parameter whose value is not the correct shape.
      *
      * @phpstan-param Selector $selector
-     * @phpstan-param FilterOptions $options
+     * @phpstan-param FactoryMethodOptions $options
      */
     public function createInvalidIso8601DateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
@@ -33,7 +34,7 @@ class FilterFactory
      * Expects dates to be formatted like "YYYY-MM-DD" or "DD-MM-YYYY".
      *
      * @phpstan-param Selector $selector
-     * @phpstan-param FilterOptions $options
+     * @phpstan-param FactoryMethodOptions $options
      */
     public function createInvalidMachineDateParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
@@ -48,10 +49,33 @@ class FilterFactory
      * sorts of database IDs are natural numbers, so that makes it very easy to identify suspicious requests.
      *
      * @phpstan-param Selector $selector
-     * @phpstan-param FilterOptions $options
+     * @phpstan-param FactoryMethodOptions $options
      */
     public function createInvalidNumericIdParameterFilter($selector, array $options = []): InvalidParameterFilter
     {
         return new InvalidParameterFilter($selector, '/^\d*$/', $options);
+    }
+
+    /**
+     * When working with Symfony, it's sometimes convenient to be able to set the request-format through a parameter in
+     * the request (e.g. `"/?_format=json"`).  We've seen malicious requests that contain potentially harmful, and
+     * probing, values for the request format.
+     *
+     * Additional options:
+     * - parameter_name: string
+     *
+     * @phpstan-param FactoryMethodOptions $options
+     */
+    public function createInvalidSymfonyRequestFormatFilter(array $options = []): InvalidParameterFilter
+    {
+        $selector = [
+            ($options['parameter_name'] ?? '_format'),
+        ];
+
+        unset($options['parameter_name']);
+
+        $options['type'] = InvalidParameterFilter::TYPE_STRING;
+
+        return new InvalidParameterFilter($selector, '~^[a-zA-Z0-9\-]+$~', $options);
     }
 }

@@ -10,11 +10,17 @@ use Symfony\Component\HttpFoundation\Request;
 
 use function array_flip;
 use function array_intersect_key;
+use function array_map;
+use function array_replace;
+use function gettype;
+use function implode;
+use function in_array;
 use function is_array;
 use function is_string;
 use function preg_match;
 
 use const false;
+use const null;
 use const true;
 
 /**
@@ -33,13 +39,32 @@ use const true;
  *
  * The validity of the value is determined using the 'validator', a regular expression that matches a _valid_ value.
  *
- * @phpstan-import-type FilterOptions from \DanBettles\Defence\Filter\AbstractFilter
+ * @phpstan-import-type IncomingFilterOptions from AbstractFilter
+ *
+ * @phpstan-type AugmentedFilterOptions array{log_level:string,type:string|null}
  * @phpstan-type Selector string|string[]
  * @phpstan-type RequestParameters array<string,string>
  * @phpstan-type GroupedParameters array{query?:RequestParameters,request?:RequestParameters}
+ *
+ * @method AugmentedFilterOptions getOptions()
  */
 class InvalidParameterFilter extends AbstractFilter
 {
+    public const TYPE_ANY = null;
+    /** @var string */
+    public const TYPE_STRING = 'string';
+    /** @var string */
+    public const TYPE_ARRAY = 'array';
+
+    /**
+     * @var array<string|null>
+     */
+    private const VALID_TYPES = [
+        self::TYPE_ANY,
+        self::TYPE_STRING,
+        self::TYPE_ARRAY,
+    ];
+
     /**
      * @phpstan-var Selector
      */
@@ -52,12 +77,31 @@ class InvalidParameterFilter extends AbstractFilter
 
     /**
      * @phpstan-param Selector $selector
-     * @param string $validator
-     * @phpstan-param FilterOptions $options
+     * @phpstan-param IncomingFilterOptions $options
+     * @throws InvalidArgumentException If the value of the `type` option is invalid
      */
-    public function __construct($selector, string $validator, array $options = [])
-    {
-        parent::__construct($options);
+    public function __construct(
+        $selector,
+        string $validator,
+        array $options = []
+    ) {
+        /** @phpstan-var AugmentedFilterOptions */
+        $completeOptions = array_replace([
+            'type' => self::TYPE_ANY,
+        ], $options);
+
+        parent::__construct($completeOptions);
+
+        $type = $this->getOptions()['type'];
+
+        if (!in_array($type, self::VALID_TYPES, true)) {
+            $listOfValidTypeNames = implode(', ', array_map(
+                fn ($typeName): string => (null === $typeName ? '`NULL`' : "`\"{$typeName}\"`"),
+                self::VALID_TYPES
+            ));
+
+            throw new InvalidArgumentException("Option `type` is not one of: {$listOfValidTypeNames}");
+        }
 
         $this
             ->setSelector($selector)
@@ -174,11 +218,22 @@ class InvalidParameterFilter extends AbstractFilter
 
     public function __invoke(Envelope $envelope): bool
     {
+        $requiredType = $this->getOptions()['type'];
+
         $filteredParamsByBagName = $this->filterRequestParametersBySelector($envelope->getRequest());
 
         foreach ($filteredParamsByBagName as $paramBagName => $parameters) {
-            foreach ($parameters as $paramName => $maybeAnArrayOfValues) {
-                foreach ((array) $maybeAnArrayOfValues as $paramValue) {
+            foreach ($parameters as $paramName => $oneOrMoreValues) {
+                if (self::TYPE_ANY !== $requiredType && $requiredType !== gettype($oneOrMoreValues)) {
+                    $this->envelopeAddLogEntry(
+                        $envelope,
+                        "The value of `{$paramBagName}.{$paramName}` is not of type `{$requiredType}`"
+                    );
+
+                    return true;
+                }
+
+                foreach ((array) $oneOrMoreValues as $paramValue) {
                     if (!$this->validateParameterValue($envelope, $paramBagName, $paramName, $paramValue)) {
                         return true;
                     }

@@ -23,7 +23,7 @@ use const true;
  */
 class BannedUserAgentHeaderFilterTest extends AbstractTestCase
 {
-    public function testIsAnAbstractfilter(): void
+    public function testIsAFilter(): void
     {
         $this->assertSubclassOf(AbstractFilter::class, BannedUserAgentHeaderFilter::class);
     }

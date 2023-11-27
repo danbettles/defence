@@ -13,6 +13,7 @@ use Psr\Log\LogLevel;
 use Symfony\Component\HttpFoundation\Request;
 
 use const false;
+use const null;
 use const true;
 
 /**
@@ -55,6 +56,7 @@ class Createinvalidiso8601dateparameterfilterTest extends AbstractTestCase
 
         $this->assertSame([
             'log_level' => LogLevel::WARNING,
+            'type' => null,
             'foo' => 'bar',
         ], $filter->getOptions());
     }
