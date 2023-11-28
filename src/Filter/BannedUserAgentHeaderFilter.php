@@ -47,6 +47,7 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
 
     public function __invoke(Envelope $envelope): bool
     {
+        /** @var string|null Contrary to what Scrutinizer thinks */
         $uaString = $envelope
             ->getRequest()
             ->headers

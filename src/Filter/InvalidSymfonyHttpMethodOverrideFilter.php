@@ -82,7 +82,7 @@ class InvalidSymfonyHttpMethodOverrideFilter extends AbstractFilter
         $invalidMethodOverrides = array_diff($filteredMethodOverrides, self::VALID_METHODS);
 
         // Reject the request if any request-method override, found anywhere, is invalid
-        if ($invalidMethodOverrides) {
+        if (!empty($invalidMethodOverrides)) {
             $this->envelopeAddLogEntry($envelope, sprintf(
                 'The request contains invalid request-method overrides: %s',
                 implode(
