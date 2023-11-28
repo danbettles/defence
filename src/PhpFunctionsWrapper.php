@@ -18,7 +18,7 @@ class PhpFunctionsWrapper
     public function exit($status = 0)
     {
         //@codingStandardsIgnoreStart
-        exit($status);
+        /** @scrutinizer ignore-call */ exit($status);
         //@codingStandardsIgnoreEnd
     }
 }

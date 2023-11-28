@@ -47,12 +47,9 @@ class BannedUserAgentHeaderFilter extends AbstractFilter
 
     public function __invoke(Envelope $envelope): bool
     {
+        $request = $envelope->getRequest();
         /** @var string|null Contrary to what Scrutinizer thinks */
-        $uaString = $envelope
-            ->getRequest()
-            ->headers
-            ->get('User-Agent')
-        ;
+        $uaString = /** @scrutinizer ignore-type */ $request->headers->get('User-Agent');
 
         if (null === $uaString) {
             // Since there's no user-agent header, we have nothing to check against our blacklist.  *In this context*,

@@ -23,11 +23,9 @@ class SuspiciousUserAgentHeaderFilter extends AbstractFilter
 {
     public function __invoke(Envelope $envelope): bool
     {
-        $uaString = $envelope
-            ->getRequest()
-            ->headers
-            ->get('User-Agent')
-        ;
+        $request = $envelope->getRequest();
+        /** @var string|null Contrary to what Scrutinizer thinks */
+        $uaString = /** @scrutinizer ignore-type */ $request->headers->get('User-Agent');
 
         if (null === $uaString) {
             $this->envelopeAddLogEntry($envelope, 'The request has no UA string.');
