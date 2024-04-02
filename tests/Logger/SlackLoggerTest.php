@@ -14,7 +14,7 @@ use Psr\Log\LogLevel;
 use function json_encode;
 
 /**
- * @phpstan-import-type Context from SlackLogger
+ * @phpstan-import-type Context from \DanBettles\Defence\Logger\NullLogger
  */
 class SlackLoggerTest extends AbstractTestCase
 {

@@ -9,6 +9,7 @@ use DanBettles\Defence\Filter\AbstractFilter;
 use DanBettles\Defence\Filter\InvalidSymfonyHttpMethodOverrideFilter;
 use DanBettles\Defence\Logger\NullLogger;
 use DanBettles\Defence\Tests\AbstractTestCase;
+use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 use Symfony\Component\HttpFoundation\Request;
 
 use function array_filter;
@@ -23,41 +24,33 @@ use const true;
 class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
 {
     //###> Factory Methods ###
-    /**
-     * @param mixed $overrideMethod Allow anything so we can try to break other code
-     */
-    private function createRequestWithMethodOverrideInTheBody(string $realMethod, $overrideMethod): Request
-    {
-        /** @var string $overrideMethod To keep PHPStan off our backs */
+    private function createRequestWithMethodOverrideInTheBody(
+        string $realMethod,
+        string $overrideMethod
+    ): Request {
         return $this->getRequestFactory()->create([
             'method' => $realMethod,
-            'body' => [
-                '_method' => $overrideMethod,
-            ],
+            'body' => ['_method' => $overrideMethod],
         ]);
     }
 
-    /**
-     * @param mixed $overrideMethod Allow anything so we can try to break other code
-     */
-    private function createRequestWithMethodOverrideInTheQuery(string $realMethod, $overrideMethod): Request
-    {
-        /** @var string $overrideMethod To keep PHPStan off our backs */
+    private function createRequestWithMethodOverrideInTheQuery(
+        string $realMethod,
+        string $overrideMethod
+    ): Request {
         return $this->getRequestFactory()->create([
             'method' => $realMethod,
-            'query' => [
-                '_method' => $overrideMethod,
-            ],
+            'query' => ['_method' => $overrideMethod],
         ]);
     }
 
-    private function createRequestWithMethodOverrideInAHeader(string $realMethod, string $overrideMethod): Request
-    {
+    private function createRequestWithMethodOverrideInAHeader(
+        string $realMethod,
+        string $overrideMethod
+    ): Request {
         return $this->getRequestFactory()->create([
             'method' => $realMethod,
-            'headers' => [
-                'X-Http-Method-Override' => $overrideMethod,
-            ],
+            'headers' => ['X-Http-Method-Override' => $overrideMethod],
         ]);
     }
     //###< Factory Methods ###
@@ -78,8 +71,6 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
             '__construct',  // Something we've seen in the wild
         ];
 
-        $invalidOverrideInArray = ['foo' => 'bar'];
-
         $argLists = [];
 
         // Invalid overrides should *always* yield `true` (i.e. "yes, suspicious")
@@ -89,9 +80,6 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
                 $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($validRealMethod, $invalidOverride)];
                 $argLists[] = [true, $this->createRequestWithMethodOverrideInAHeader($validRealMethod, $invalidOverride)];
             }
-
-            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($validRealMethod, $invalidOverrideInArray)];
-            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($validRealMethod, $invalidOverrideInArray)];
         }
 
         $incompatibleRealMethods = array_filter(
@@ -107,9 +95,6 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
                 $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($incompatibleRealMethod, $invalidOverride)];
                 $argLists[] = [true, $this->createRequestWithMethodOverrideInAHeader($incompatibleRealMethod, $invalidOverride)];
             }
-
-            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($incompatibleRealMethod, $invalidOverrideInArray)];
-            $argLists[] = [true, $this->createRequestWithMethodOverrideInTheQuery($incompatibleRealMethod, $invalidOverrideInArray)];
 
             foreach (InvalidSymfonyHttpMethodOverrideFilter::VALID_METHODS as $validOverride) {
                 $argLists[] = [true, $this->createRequestWithMethodOverrideInTheBody($incompatibleRealMethod, $validOverride)];
@@ -151,6 +136,72 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
     }
 
     /** @return array<mixed[]> */
+    public function providesRequestsWithAQueryContainingAnInvalidOverrideMethod(): array
+    {
+        return [
+            [
+                (function () {
+                    $request = new Request(['_method' => [Request::METHOD_PUT]]);
+                    $request->setMethod(Request::METHOD_POST);
+
+                    return $request;
+                })(),
+            ],
+            [
+                (function () {
+                    $request = new Request();
+                    $request->setMethod(Request::METHOD_POST);
+                    $request->query->set('_method', [Request::METHOD_PUT]);
+
+                    return $request;
+                })(),
+            ],
+        ];
+    }
+
+    /** @dataProvider providesRequestsWithAQueryContainingAnInvalidOverrideMethod */
+    public function testSymfonyWillNotAllowAnOverrideMethodInAnArrayInTheQuery(Request $request): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Input value "_method" contains a non-scalar value.');
+
+        $request->query->get('_method');
+    }
+
+    /** @return array<mixed[]> */
+    public function providesRequestsWithABodyContainingAnInvalidOverrideMethod(): array
+    {
+        return [
+            [
+                (function () {
+                    $request = new Request([], ['_method' => [Request::METHOD_PUT]]);
+                    $request->setMethod(Request::METHOD_POST);
+
+                    return $request;
+                })(),
+            ],
+            [
+                (function () {
+                    $request = new Request();
+                    $request->setMethod(Request::METHOD_POST);
+                    $request->request->set('_method', [Request::METHOD_PUT]);
+
+                    return $request;
+                })(),
+            ],
+        ];
+    }
+
+    /** @dataProvider providesRequestsWithABodyContainingAnInvalidOverrideMethod */
+    public function testSymfonyWillNotAllowAnOverrideMethodInAnArrayInTheBody(Request $request): void
+    {
+        $this->expectException(BadRequestException::class);
+        $this->expectExceptionMessage('Input value "_method" contains a non-scalar value.');
+
+        $request->request->get('_method');
+    }
+
+    /** @return array<mixed[]> */
     public function providesLogEntries(): array
     {
         return [
@@ -165,15 +216,6 @@ class InvalidSymfonyHttpMethodOverrideFilterTest extends AbstractTestCase
             [
                 'The request contains invalid request-method overrides: `BAZ`',
                 $this->createRequestWithMethodOverrideInAHeader(Request::METHOD_POST, 'baz'),
-            ],
-            // An array is not permitted:
-            [
-                'The type of the request-method override is invalid',
-                $this->createRequestWithMethodOverrideInTheQuery(Request::METHOD_POST, []),
-            ],
-            [
-                'The type of the request-method override is invalid',
-                $this->createRequestWithMethodOverrideInTheBody(Request::METHOD_POST, []),
             ],
         ];
     }

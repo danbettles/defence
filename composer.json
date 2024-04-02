@@ -1,6 +1,6 @@
 {
     "name": "danbettles/defence",
-    "description": "A simple intrusion detection/prevention system framework for PHP apps.",
+    "description": "A simple intrusion detection/prevention system framework for PHP apps",
     "keywords": [
         "IDS",
         "IPS",
@@ -26,16 +26,16 @@
         }
     ],
     "require": {
-        "php": "^7.4|^8.0",
+        "php": "^8.1",
         "danbettles/gestalt": "^4.0",
-        "symfony/http-foundation": "^4.4.7|^5.0",
-        "psr/log": "^1.1"
+        "symfony/http-foundation": "^4.4.7|^5.0|^6.0",
+        "psr/log": "^2.0.0|^3.0.0"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0.2",
-        "squizlabs/php_codesniffer": "^3.5.4",
+        "phpunit/phpunit": "^9.6.18",
+        "squizlabs/php_codesniffer": "^3.9.1",
         "danbettles/codesniffer-standard": "^2.0.0",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "^1.10.66"
     },
     "suggest": {
         "ext-curl": "If you want to use `SlackLogger`."

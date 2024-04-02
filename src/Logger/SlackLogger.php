@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Logger;
 
+use CurlHandle;
 use Exception;
 use InvalidArgumentException;
 use Psr\Log\AbstractLogger;
 use Psr\Log\LogLevel;
+use Stringable;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -40,7 +42,8 @@ use const true;
  * default minimum log-level of the logger is `"debug"` to ensure that, out of the box, the logger will send all
  * messages to Slack.
  *
- * @phpstan-type Context array<string,mixed>
+ * @phpstan-import-type Context from NullLogger
+ *
  * @phpstan-type LoggerOptions array<string,string>
  */
 class SlackLogger extends AbstractLogger
@@ -140,7 +143,7 @@ class SlackLogger extends AbstractLogger
      */
     protected function sendJsonToSlack(string $json): string
     {
-        /** @var resource|false */
+        /** @var CurlHandle|false */
         $curl = curl_init();
 
         if (false === $curl) {
@@ -181,13 +184,15 @@ class SlackLogger extends AbstractLogger
     }
 
     /**
-     * @see Psr\Log\LoggerInterface::log()
+     * @override
      * @param string $level
-     * @param string $message
      * @phpstan-param Context $context
      */
-    public function log($level, $message, array $context = [])
-    {
+    public function log(
+        $level,
+        string|Stringable $message,
+        array $context = []
+    ): void {
         if (!$this->logLevelIsSufficient($level)) {
             return;
         }

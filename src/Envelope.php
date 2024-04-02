@@ -38,9 +38,9 @@ class Envelope implements LoggerAwareInterface
     }
 
     /**
-     * @see LoggerAwareInterface::setLogger()
+     * @override
      */
-    public function setLogger(LoggerInterface $logger)
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
