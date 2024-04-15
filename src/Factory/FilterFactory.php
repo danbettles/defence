@@ -4,7 +4,13 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Factory;
 
+use DanBettles\Defence\Filter\InvalidHeaderFilter;
 use DanBettles\Defence\Filter\InvalidParameterFilter;
+
+use function preg_replace;
+
+use const false;
+use const null;
 
 /**
  * Provides methods that create pre-configured filters.
@@ -77,5 +83,29 @@ class FilterFactory
         $options['type'] = InvalidParameterFilter::TYPE_STRING;
 
         return new InvalidParameterFilter($selector, '~^[a-zA-Z0-9\-]+$~', $options);
+    }
+
+    /**
+     * This filter can help to safely eliminate a swathe of suspicious requests.
+     *
+     * It appears that all friendly user-agents, including browsers, bots, and command-line tools, are happy to identify
+     * themselves -- indeed many now include their origin in their UA string.  We've seen plenty malicious requests with
+     * a blank, or absent, user-agent header but never a benign request with no UA string.
+     *
+     * @phpstan-param FactoryMethodOptions $options
+     */
+    public function createSuspiciousUserAgentHeaderFilter(array $options = []): InvalidHeaderFilter
+    {
+        $validator = function (?string $uaString): bool {
+            if (null === $uaString) {
+                return false;
+            }
+
+            $significantChars = preg_replace('~[^a-zA-Z]~', '', $uaString);
+
+            return '' !== $significantChars;
+        };
+
+        return new InvalidHeaderFilter('User-Agent', $validator, $options);
     }
 }

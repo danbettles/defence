@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Tests\Factory;
 
-use DanBettles\Defence\Tests\AbstractTestCase;
-use DanBettles\Defence\Factory\DefenceFactory;
-use DanBettles\Defence\Handler\TerminateScriptHandler;
-use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
 use DanBettles\Defence\Defence;
+use DanBettles\Defence\Factory\DefenceFactory;
+use DanBettles\Defence\Filter\InvalidHeaderFilter;
+use DanBettles\Defence\Handler\TerminateScriptHandler;
+use DanBettles\Defence\Tests\AbstractTestCase;
 
 class DefenceFactoryTest extends AbstractTestCase
 {
@@ -21,7 +21,7 @@ class DefenceFactoryTest extends AbstractTestCase
         $filters = $defence->getFilterChain()->getFilters();
 
         $this->assertCount(1, $filters);
-        $this->assertContainsInstanceOf(SuspiciousUserAgentHeaderFilter::class, $filters);
+        $this->assertContainsInstanceOf(InvalidHeaderFilter::class, $filters);
 
         $this->assertInstanceOf(TerminateScriptHandler::class, $defence->getHandler());
     }

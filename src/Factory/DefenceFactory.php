@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace DanBettles\Defence\Factory;
 
-use DanBettles\Gestalt\SimpleFilterChain;
+use DanBettles\Defence\Defence;
 use DanBettles\Defence\Handler\TerminateScriptHandler;
 use DanBettles\Defence\PhpFunctionsWrapper;
-use DanBettles\Defence\Defence;
-use DanBettles\Defence\Filter\SuspiciousUserAgentHeaderFilter;
+use DanBettles\Gestalt\SimpleFilterChain;
 
 class DefenceFactory
 {
@@ -19,7 +18,7 @@ class DefenceFactory
 
     /**
      * Creates an instance of `Defence` containing no filters, and a handler that will immediately send a "Forbidden"
-     * response and terminate the script.
+     * response and terminate the script
      */
     public function createDefaultDefence(): Defence
     {
@@ -27,16 +26,18 @@ class DefenceFactory
     }
 
     /**
-     * Creates an instance of `Defence` in the default configuration and then adds all filters that require no
-     * set up.
+     * Creates an instance of `Defence` in the default configuration and then adds filters that require no set-up and
+     * can be safely run in all cases
      */
     public function createDefaultDefenceWithBasicFilters(): Defence
     {
+        $filterFactory = new FilterFactory();
+
         $defence = $this->createDefaultDefence();
 
         $defence
             ->getFilterChain()
-            ->appendFilter(new SuspiciousUserAgentHeaderFilter())
+            ->appendFilter($filterFactory->createSuspiciousUserAgentHeaderFilter())
         ;
 
         return $defence;
